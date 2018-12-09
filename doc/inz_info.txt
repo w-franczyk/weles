@@ -1,0 +1,26 @@
+------- tworzenie wirtualnego hdd
+- https://linux.die.net/man/1/dd, bs=wielkosc "bloku"? count=ilosc blokow
+- DOS partition table vs GPT:
+  - https://en.wikipedia.org/wiki/GUID_Partition_Table
+  - DOS = BIOS i MBR, GPT = UEFI
+  - http://www.uefi.org/sites/default/files/resources/UEFI%20Spec%202_7_A%20Sept%206.pdf
+
+- przygotowanie dysku:
+  - pusta przestrzen: dd if=/de:w
+v/zero of=disk.img bs=1M count=100
+  - fdisk disk.img, tworzymy tabele partycji DOS i partycje, sektor 512b
+  - wlaczamy flage boot (0x55aa na offsecie 0x1fe, nie ma jednak dokumentacji)
+  - montujemy nowo stworzona partycje:
+    sudo losetup --offset 1048576 -f disk.img
+    (offset dla partycji, start sector * sector sz)
+  - tworzymy system plikow dla partycji: mkfs.vfat /dev/loop0 (czemu vfat a nie fat?)
+
+  - format MBR (pierwszego sektora) https://wiki.osdev.org/MBR_(x86), https://pl.wikipedia.org/wiki/Master_Boot_Record#/media/File:GNU_GRUB_on_MBR_partitioned_hard_disk_drives.svg
+  - pierwsze czterysta-kilka bajtów (bootloader) będzie zaladowane do pamieci i wykonane. najprawdopodobniej w obszar 0000:7C00 (http://www.scs.stanford.edu/nyu/04fa/lab/specsbbs101.pdf ???)
+  - reszta to tabela partycji 
+
+
+- ia32
+  - pdf basic architecture:
+    - tryby pracy (real, protected: 3.1 Modes of Operation
+    - modele zarzadzania pamiecia oferowane przez procesor: 3.3.1 IA-32 memory models
