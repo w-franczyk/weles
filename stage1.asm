@@ -4,6 +4,11 @@ start:
 	mov bh, 0
 	mov cx, 100
 	int 0x10
+
+  ; Load stage 2
+  mov ah, 0x42 ; extended load
+  mov dl, 0x80 ; drive number, to check
+  
   
   jmp exit
 

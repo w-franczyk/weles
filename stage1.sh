@@ -16,7 +16,10 @@ then
 	exit 2
 fi
 
-echo "INFO: flushing the old MBR code"
+echo "INFO: flushing the old stage 1 code"
 dd if=/dev/zero of=disk.img conv=notrunc bs=1 count=$STAGE1_MAX_SIZE 
-echo "INFO: writing the new code"
+echo "INFO: writing the new stage 1 code at MBR"
 dd if=stage1.bin of=disk.img conv=notrunc
+
+STAGE2_BINARY
+echo "INFO: flushing the old stage 2 code
