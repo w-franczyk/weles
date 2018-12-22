@@ -24,3 +24,10 @@ v/zero of=disk.img bs=1M count=100
   - pdf basic architecture:
     - tryby pracy (real, protected: 3.1 Modes of Operation
     - modele zarzadzania pamiecia oferowane przez procesor: 3.3.1 IA-32 memory models
+
+- stage 1 laduje stage 2 uzywajac INT13 ah=42 (extended LBA load)
+- LBA - Logical Block Addressing - https://en.wikipedia.org/wiki/Logical_block_addressing
+- adresowanie segment:offset
+  - https://en.wikipedia.org/wiki/X86_memory_segmentation
+  - https://thestarman.pcministry.com/asm/debug/Segments.html
+- maksymalnie 65536 bajtow w real mode co daje 128 blokow
