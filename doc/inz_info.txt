@@ -25,9 +25,26 @@ v/zero of=disk.img bs=1M count=100
     - tryby pracy (real, protected: 3.1 Modes of Operation
     - modele zarzadzania pamiecia oferowane przez procesor: 3.3.1 IA-32 memory models
 
-- stage 1 laduje stage 2 uzywajac INT13 ah=42 (extended LBA load)
+- bios laduje mbr (stage 1) na 0x7c00 - https://wiki.osdev.org/Memory_Map_(x86)
+- stage 1 laduje stage 2 uzywajac INT13 ah=42 (extended LBA load) na 0x7e00
 - LBA - Logical Block Addressing - https://en.wikipedia.org/wiki/Logical_block_addressing
 - adresowanie segment:offset
   - https://en.wikipedia.org/wiki/X86_memory_segmentation
   - https://thestarman.pcministry.com/asm/debug/Segments.html
-- maksymalnie 65536 bajtow w real mode co daje 128 blokow
+- maksymalnie 65536 bajtow w real mode co daje 128 blokow - sprawdzone, tak jest
+
+- qemu gdb debug
+  - qemu-system-x86_64 -s -S disk.img
+  - gdb
+  - target remote localhost:1234
+
+- protected mode: programming guide rozdzialy 9.8 i 9.9
+- Global Descriptior Table:
+  - to tabelka definiujaca segmenty pamieci
+  - https://en.wikipedia.org/wiki/Global_Descriptor_Table
+  - https://wiki.osdev.org/GDT_Tutorial
+  - http://www.osdever.net/tutorials/view/the-world-of-protected-mode 
+  - dokumentacja Intela - do znalezienia
+
+- Interrupt Descriptor Table:
+  - tabelke definiujaca przerwania OSu
