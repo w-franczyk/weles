@@ -1,13 +1,18 @@
-%define STAGE2_BASE 0x7e00
+%include "consts.asm"
 
 [ORG STAGE2_BASE]
 [BITS 16]
+  jmp start
+
+%include "common.asm"
+
 start:
-	mov ah, 0x0A ; print character only
-	mov al, '3'
-	mov bh, 0
-	mov cx, 200
-	int 0x10
+	; mov ah, 0x0A ; print character only
+	; mov al, '3'
+	; mov bh, 0
+	; mov cx, 200
+	; int 0x10
+  call load_partition_data
 
   cli ; disable any other interrupts
   xor ax, ax
@@ -21,6 +26,11 @@ start:
   or eax, 1 ; enable the flag...
   mov cr0, eax ; ...and save it back to cr0
   jmp 0x8:protected_mode
+
+%define PARTITION1_TABLE STAGE1_BASE + 0x1be
+load_partition_data:
+  
+  ret 
   
 [BITS 32]
 protected_mode:

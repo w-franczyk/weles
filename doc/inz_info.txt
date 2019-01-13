@@ -16,7 +16,8 @@ v/zero of=disk.img bs=1M count=100
   - tworzymy system plikow dla partycji: mkfs.vfat /dev/loop0 (czemu vfat a nie fat?)
 
   - format MBR (pierwszego sektora) https://wiki.osdev.org/MBR_(x86), https://pl.wikipedia.org/wiki/Master_Boot_Record#/media/File:GNU_GRUB_on_MBR_partitioned_hard_disk_drives.svg
-  - pierwsze czterysta-kilka bajtów (bootloader) będzie zaladowane do pamieci i wykonane. najprawdopodobniej w obszar 0000:7C00 (http://www.scs.stanford.edu/nyu/04fa/lab/specsbbs101.pdf ???)
+  - MBR zaladowany w 0000:7C00 (http://www.scs.stanford.edu/nyu/04fa/lab/specsbbs101.pdf ???)
+  - pierwsze 436 bajtow bootstrap
   - reszta to tabela partycji 
 
 
