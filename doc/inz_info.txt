@@ -19,6 +19,7 @@ v/zero of=disk.img bs=1M count=100
   - MBR zaladowany w 0000:7C00 (http://www.scs.stanford.edu/nyu/04fa/lab/specsbbs101.pdf ???)
   - pierwsze 436 bajtow bootstrap
   - reszta to tabela partycji 
+  - https://wiki.osdev.org/MBR_(x86)
 
 
 - ia32
@@ -49,3 +50,7 @@ v/zero of=disk.img bs=1M count=100
 
 - Interrupt Descriptor Table:
   - tabelke definiujaca przerwania OSu
+
+- FAT
+  - https://en.wikipedia.org/wiki/Design_of_the_FAT_file_system - szczegolowe wyjasnienie
+  - https://wiki.osdev.org/FAT - elegancko opisane jak czytac FAT

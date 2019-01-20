@@ -7,11 +7,6 @@
 %include "common.asm"
 
 start:
-	; mov ah, 0x0A ; print character only
-	; mov al, '3'
-	; mov bh, 0
-	; mov cx, 200
-	; int 0x10
   call load_partition_data
 
   cli ; disable any other interrupts
@@ -27,10 +22,53 @@ start:
   mov cr0, eax ; ...and save it back to cr0
   jmp 0x8:protected_mode
 
-%define PARTITION1_TABLE STAGE1_BASE + 0x1be
+; functions
 load_partition_data:
-  
-  ret 
+  push bp
+  mov bp, sp
+  pusha
+
+  ; load the partition 1 BPB
+  %define PARTITION1_TABLE STAGE1_BASE + 0x1be
+  %define PARTITION1_OFFSET PARTITION1_TABLE + 0x8
+  mov ax, WORD [PARTITION1_OFFSET + 2]
+  cmp ax, 0
+  jne error ; 32 bit addresses not supported for now
+  push WORD [PARTITION1_OFFSET]
+  push 1
+  push bios_parameter_block
+  call disk_read
+  cmp ax, 0
+  jne error
+  add sp, 6
+  mov ax, bios_parameter_block
+
+  ; get sector of the root directory
+  ; note: there will be used some 32 bit instructions
+  ; nasm should automatically use the operand size override prefix
+  xor eax, eax
+  xor ecx, ecx
+  mov ax, [bpb_table_size_16]
+  cmp eax, 0
+  jne lpd_got_fat_size
+  mov eax, [bpb_table_size_32]
+  lpd_got_fat_size:
+  mov cl, [bpb_table_count]
+  imul eax, ecx
+  add ax, [bpb_reserved_sector_count] ; now we have first_data_sector
+  xor ebx, ebx
+  mov ebx, [bpb_root_cluster]
+  sub ebx, 2
+  mov cl, [bpb_sectors_per_cluster]
+  imul ebx, ecx
+  add eax, ebx ; first sector of root cluster
+ 
+
+  popa
+  pop bp
+  ret
+
+
   
 [BITS 32]
 protected_mode:
@@ -51,7 +89,23 @@ protected_mode:
 hang:
   jmp hang
 
+
+
 ; structures
+bios_parameter_block:
+  times 13 db 0
+  bpb_sectors_per_cluster db 0
+  bpb_reserved_sector_count dw 0
+  bpb_table_count db 0
+  times 5 db 0
+  bpb_table_size_16 dw 0
+  times 12 db 0
+  bpb_table_size_32 dd 0
+  times 4 db 0
+  bpb_root_cluster dd 0
+  times 42 db 0
+  times 512 - ($ - bios_parameter_block) db 0
+
 gdt:
   gdt_null:
   dq 0

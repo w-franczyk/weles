@@ -1,5 +1,5 @@
 echo -n "INFO: Building stage1.asm... "
-nasm stage1.asm -o stage1.bin
+nasm -Wall -g stage1.asm -o stage1.bin
 if [ $? = 0 ]
 then
 	echo "Okay."
