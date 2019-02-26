@@ -1,0 +1,121 @@
+00100000: eb58 906d 6b66 732e 6661 7400 0201 2000  .X.mkfs.fat... .
+00100010: 0200 0000 00f8 0000 2000 4000 0000 0000  ........ .@.....
+00100020: 0018 0300 1806 0000 0000 0000 0200 0000  ................
+00100030: 0100 0600 0000 0000 0000 0000 0000 0000  ................
+00100040: 8000 291d 7358 5d4e 4f20 4e41 4d45 2020  ..).sX]NO NAME  
+00100050: 2020 4641 5433 3220 2020 0e1f be77 7cac    FAT32   ...w|.
+00100060: 22c0 740b 56b4 0ebb 0700 cd10 5eeb f032  ".t.V.......^..2
+00100070: e4cd 16cd 19eb fe54 6869 7320 6973 206e  .......This is n
+00100080: 6f74 2061 2062 6f6f 7461 626c 6520 6469  ot a bootable di
+00100090: 736b 2e20 2050 6c65 6173 6520 696e 7365  sk.  Please inse
+001000a0: 7274 2061 2062 6f6f 7461 626c 6520 666c  rt a bootable fl
+001000b0: 6f70 7079 2061 6e64 0d0a 7072 6573 7320  oppy and..press 
+001000c0: 616e 7920 6b65 7920 746f 2074 7279 2061  any key to try a
+001000d0: 6761 696e 202e 2e2e 200d 0a00 0000 0000  gain ... .......
+
+
+
+
+
+eb 58 90                            - 3 - jmpBoot
+6d 6b 66 73 2e 66 61 74             - 8 - oemname
+00 02                               - 2 - bytsPerSec 
+01                                  - 1 - secPerClus
+20 00                               - 2 - rsvdSecCnt
+02                                  - 1 - numFATs
+00 00                               - 2 - RootEntCnt
+00 00                               - 2 - TotSec16
+f8                                  - 1 - Media
+00 00                               - 2 - FATSz16
+20 00                               - 2 - SecPerTrk
+40 00                               - 2 - NumHeads
+00 00 00 00                         - 4 - HiddSec
+00 18 03 00                         - 4 - TotSec32
+
+FAT32
+18 06 00 00                         - 4 - FATSz32
+00 00                               - 2 - ExtFlags
+00 00                               - 2 - FSVer
+02 00 00 00                         - 4 - RootClus
+01 00                               - 2 - FSInfo
+06 00                               - 2 - BkBootSec
+00 00 00 00 00 00 00 00 00 00 00 00 - 12 - Reserved
+80                                  - 1 - DrvNum
+00                                  - 1 - Reserved1
+29                                  - 1 - BootSig
+1d 73 58 5d                         - 4 - VolID
+4e 4f 20 4e 41 4d 45 20 20 20 20    - 11 - VolLab
+46 41 54 33 32 20 20 20             - 8 - FilSysType
+
+RootDirSectors = ((BPB_RootEntCnt * 32) + (BPB_BytsPerSec – 1)) / BPB_BytsPerSec;
+RootDirSectors = ((0 * 32) + (512 - 1) / 512 = 1 ?????????? spec pisze ze powinno byc 0!!!
+
+If(BPB_FATSz16 != 0)
+    FATSz = BPB_FATSz16;
+Else
+    FATSz = BPB_FATSz32; 
+
+FirstDataSector = BPB_ResvdSecCnt + (BPB_NumFATs * FATSz) + RootDirSectors;
+FirstDataSector = 32 + (2 * 1560) + 0(?)
+FirstDataSector = 3152 lub 3153
+
+FirstSectorofCluster = ((N – 2) * BPB_SecPerClus) + FirstDataSector;
+FirstSectorofCluster = ((2 - 2) * 1) + 3152 = 3152
+
+
+
+FAT12/16
+18                                  - 1 - DrvNum
+06                                  - 1 - Reserved1
+00                                  - 1 - BootSig
+00 00 00 00                         - 4 - VolID
+00 02 00 00 00 01 00 06 00 00 00    - 11 - VolLab
+00 00 00 00 00 00 00 00             - 8 - FilSysType
+
+
+If(BPB_FATSz16 != 0)
+    FATSz = BPB_FATSz16;
+Else
+    FATSz = BPB_FATSz32;  
+
+If(BPB_TotSec16 != 0)
+    TotSec = BPB_TotSec16;
+Else
+    TotSec = BPB_TotSec32;
+
+DataSec = TotSec – (BPB_ResvdSecCnt + (BPB_NumFATs * FATSz) + RootDirSectors);
+DataSec = 202752 - (32 + (2 * 1560) + 0) = 199600
+
+
+
+CountofClusters = DataSec / BPB_SecPerClus
+CountofClusters = 199600 / 1 = 199600
+
+
+
+If(FATType == FAT16)
+    FATOffset = N * 2;
+Else if (FATType == FAT32)
+    FATOffset = N * 4;
+
+ThisFATSecNum = BPB_ResvdSecCnt + (FATOffset / BPB_BytsPerSec);
+ThisFATSecNum = 32 + (2 * 4 / 512) = 32.015625
+
+ThisFATEntOffset = REM(FATOffset / BPB_BytsPerSec);
+ThisFATEntOffset = (2 * 4) % 512 = 8
+
+
+
+
+
+0e1f be77 7cac 
+22c0 740b 56b4 0ebb 0700 cd10 5eeb f032  
+e4cd 16cd 19eb fe54 6869 7320 6973 206e 
+6f74 2061 2062 6f6f 7461 626c 6520 6469 
+736b 2e20 2050 6c65 6173 6520 696e 7365 
+7274 2061 2062 6f6f 7461 626c 6520 666c 
+6f70 7079 2061 6e64 0d0a 7072 6573 7320 
+616e 7920 6b65 7920 746f 2074 7279 2061 
+6761 696e 202e 2e2e 200d 0a00 0000 0000 
+
+
