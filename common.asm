@@ -18,6 +18,10 @@ disk_read:
   %define return_val ebp - 2
 
   pusha
+  xor ax, ax
+  xor bx, bx
+  xor cx, cx
+  xor dx, dx
 
   mov bx, [ebp + 8]
   mov [dap_start_block], bx
@@ -44,3 +48,27 @@ error: ; print 'E'
   mov cx, 1
   int 0x10
   jmp exit
+
+print:
+  xor ax, ax
+  xor bx, bx
+  xor cx, cx
+  xor dx, dx
+
+	mov ax, cs
+	mov es, ax      ; set up ES register
+
+	mov ah, 0x13 ; print string
+  mov al, 0x1 ; update cursor
+  mov bh, 0x0 ; page number
+  mov bl, 0x07 ; color white
+  mov cx, Msg1Len ; length
+  mov dh, 0 ; row
+  mov dl, 0 ; column
+  mov bp, Msg1 ; msg
+  int 0x10
+
+	ret
+
+	Msg1	db 'Welcome to WouOS', 0x0d, 0xa
+  Msg1Len	equ $ - Msg1
