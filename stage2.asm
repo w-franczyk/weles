@@ -6,7 +6,13 @@
 
 %include "common.asm"
 
+DEFINE_MSG msgLoadPartitionData, 'Loading partition data'
+DEFINE_MSG msgLoadBpb, 'Loading BIOS Parameter Block'
+DEFINE_MSG msgLoadGdt, 'Setting up Global Descriptor Table'
+DEFINE_MSG msgEnterProtected, 'Entering protected mode'
+
 start:
+  PRINT msgLoadPartitionData
   call load_partition_data
 
   cli ; disable any other interrupts
@@ -14,9 +20,11 @@ start:
   mov ds, ax ; set data segment to 0
   
   ; load GDT
+  PRINT msgLoadGdt
   lgdt [gdt_descriptor]
 
   ; enable protected mode
+  PRINT msgEnterProtected
   mov eax, cr0
   or eax, 1 ; enable the flag...
   mov cr0, eax ; ...and save it back to cr0
@@ -28,6 +36,7 @@ load_partition_data:
   mov bp, sp
   pusha
 
+  PRINT msgLoadBpb
   ; load the partition 1 BPB
   %define PARTITION1_TABLE STAGE1_BASE + 0x1be
   %define PARTITION1_OFFSET PARTITION1_TABLE + 0x8

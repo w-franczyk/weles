@@ -21,8 +21,10 @@ _start:
   mov sp, STACK_ADDRESS
   mov bp, sp
 
-	call print
+  PRINT msgBootVer
+  PRINT msgWelcome
 
+  PRINT msgLoadStage2
   push 1 ; offset
   push 128 ; size, max stage2 size = 65k
   push STAGE2_BASE ; address
@@ -36,3 +38,6 @@ _start:
 exit:
   jmp exit
 
+DEFINE_MSG msgBootVer, 'The Bootloader v0.01'
+DEFINE_MSG msgWelcome, 'Welcome!'
+DEFINE_MSG msgLoadStage2, 'Loading stage2'

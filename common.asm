@@ -6,7 +6,26 @@ disk_address_packet:
   dap_target dd 0
   dap_start_block dq 0
 
-; funcs
+
+
+; funcs:
+; macros
+%macro DEFINE_MSG 2
+  %1 db %2, 0xd, 0xa
+  %1Len equ $ - %1
+%endmacro
+
+DEFINE_MSG msgError, 'Error!'
+DEFINE_MSG msgDone, 'Done!'
+
+%macro PRINT 1
+  push %1
+  push %1Len
+  call print
+  add sp, 4
+%endmacro
+
+
 
 ; args: start_block, size, target
 ; return: ax - 0 on success, otherwise error code
@@ -41,15 +60,20 @@ disk_read:
   pop bp
   ret
 
-error: ; print 'E'
-  mov ah, 0x0A
-  mov al, 'E'
-  mov bh, 0
-  mov cx, 1
-  int 0x10
+error: ; print 'Error' and exit
+  PRINT msgError
   jmp exit
 
+; args: str pointer, size
+; return: none
 print:
+  push bp
+  mov bp, sp
+  pusha
+
+	%define str bp + 6
+  %define len bp + 4
+
   xor ax, ax
   xor bx, bx
   xor cx, cx
@@ -58,17 +82,24 @@ print:
 	mov ax, cs
 	mov es, ax      ; set up ES register
 
-	mov ah, 0x13 ; print string
+  ; get current cursor coords
+  mov ah, 0x3
+  mov bh, 0
+  int 0x10 ; coords saved into dx
+
+  ; get current page number
+  mov ah, 0x0f
+  int 0x10 ; page saved into bh
+
+  ; print string
+	mov ah, 0x13
   mov al, 0x1 ; update cursor
-  mov bh, 0x0 ; page number
-  mov bl, 0x07 ; color white
-  mov cx, Msg1Len ; length
-  mov dh, 0 ; row
-  mov dl, 0 ; column
-  mov bp, Msg1 ; msg
+  mov bl, 0x07 ; color light grey
+  mov cx, [len] ; length
+  mov bp, [str] ; msg
   int 0x10
 
-	ret
+	popa
+  pop bp
 
-	Msg1	db 'Welcome to WouOS', 0x0d, 0xa
-  Msg1Len	equ $ - Msg1
+	ret
