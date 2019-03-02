@@ -1,0 +1,12 @@
+     1                                  %include "consts.asm"
+     1                              <1> %define STAGE1_BASE 0x7c00
+     2                              <1> %define STACK_ADDRESS 0x7ffe ; grows down
+     3                              <1> %define SYSTEM_INFO 0x8000
+     4                              <1> %define STAGE2_BASE 0x8200
+     5                              <1> %define BOOSTRAP_BASE 0x8800
+     2                                  
+     3                                  [BITS 32]
+     4 00000000 B800800B00              mov eax, 0xb8000
+     5 00000005 C60042                  mov [eax], BYTE 'B'
+     6 00000008 B801800B00              mov eax, 0xb8001
+     7 0000000D C6001B                  mov [eax], BYTE 0x1b

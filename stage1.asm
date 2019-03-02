@@ -7,15 +7,15 @@ jmp _start
 %include "common.asm"
 
 _start:
-	; 80x25 text video mode
-	mov ah, 0x0
-	mov al, 0x03
-	int 0x10
+  ; 80x25 text video mode
+  mov ah, 0x0
+  mov al, 0x03
+  int 0x10
 
-	; set active display page 0
-	mov ah, 0x05
-	mov al, 0x0
-	int 0x10
+  ; set active display page 0
+  mov ah, 0x05
+  mov al, 0x0
+  int 0x10
 
   ; setup the stack
   mov sp, STACK_ADDRESS
@@ -38,6 +38,6 @@ _start:
 exit:
   jmp exit
 
-DEFINE_MSG msgBootVer, 'The Bootloader v0.01'
+DEFINE_MSG msgBootVer, 'The bootloader'
 DEFINE_MSG msgWelcome, 'Welcome!'
 DEFINE_MSG msgLoadStage2, 'Loading stage2'

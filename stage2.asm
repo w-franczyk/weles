@@ -11,6 +11,9 @@ DEFINE_MSG msgLoadBpb, 'Loading BIOS Parameter Block'
 DEFINE_MSG msgLoadGdt, 'Setting up Global Descriptor Table'
 DEFINE_MSG msgEnterProtected, 'Entering protected mode'
 
+g_first_data_sector dw 0
+g_partition_offset dw 0
+
 start:
   PRINT msgLoadPartitionData
   call load_partition_data
@@ -43,7 +46,9 @@ load_partition_data:
   mov ax, WORD [PARTITION1_OFFSET + 2]
   cmp ax, 0
   jne error ; 32 bit addresses not supported for now
-  push WORD [PARTITION1_OFFSET]
+  mov ax, WORD [PARTITION1_OFFSET]
+  mov [g_partition_offset], ax
+  push WORD [g_partition_offset]
   push 1
   push bios_parameter_block
   call disk_read
@@ -64,21 +69,48 @@ load_partition_data:
   lpd_got_fat_size:
   mov cl, [bpb_table_count]
   imul eax, ecx
-  add ax, [bpb_reserved_sector_count] ; now we have first_data_sector
-  xor ebx, ebx
-  mov ebx, [bpb_root_cluster]
-  sub ebx, 2
-  mov cl, [bpb_sectors_per_cluster]
-  imul ebx, ecx
-  add eax, ebx ; first sector of root cluster
- 
+  add ax, [bpb_reserved_sector_count] 
+  mov [g_first_data_sector], ax ; now we have first_data_sector
+
+  push DWORD [bpb_root_cluster]
+  call get_first_sector_of_cluster
+  add sp, 4
 
   popa
   pop bp
   ret
 
+; args: 4 byte cluster number
+; return: ax
+get_first_sector_of_cluster:
+  push bp
+  mov bp, sp
 
-  
+  push 0
+  %define ret_val bp - 2
+
+  pusha
+
+  %define cluster_number bp + 4 ; 4 bytes!
+
+  mov eax, [cluster_number]
+  sub eax, 2
+  mov bl, [bpb_sectors_per_cluster]
+  xor ebx, ebx
+  imul eax, ebx
+  add ax, [g_first_data_sector]
+  add ax, [g_partition_offset]
+  mov [ret_val], ax
+
+  call printr
+
+  popa
+  pop ax ; ret_val
+  pop bp
+  ret
+
+
+
 [BITS 32]
 protected_mode:
   ; set segment registers to data segment (0x10)
@@ -89,11 +121,6 @@ protected_mode:
   mov gs, ax
   mov ss, ax
   mov esp, 0x10000 ; move the stack pointer right after already loaded BIOS stuff
-
-  mov eax, 0xb8000
-  mov [eax], BYTE 'P'
-  mov eax, 0xb8001
-  mov [eax], BYTE 0x1b
  
 hang:
   jmp hang

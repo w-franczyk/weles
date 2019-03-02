@@ -1,6 +1,6 @@
 STAGE2_BINARY="stage2.bin"
 echo -n "INFO: Building $STAGE2_BINARY... "
-nasm -Wall -g stage2.asm -o $STAGE2_BINARY
+nasm -Wall -g stage2.asm -o $STAGE2_BINARY -l $STAGE2_BINARY.lst 
 if [ $? = 0 ]
 then
 	echo "Okay."

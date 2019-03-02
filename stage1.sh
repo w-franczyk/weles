@@ -1,5 +1,6 @@
+STAGE1_BINARY="stage1.bin"
 echo -n "INFO: Building stage1.asm... "
-nasm -Wall -g stage1.asm -o stage1.bin
+nasm -Wall -O0 stage1.asm -o $STAGE1_BINARY -l $STAGE1_BINARY.lst
 if [ $? = 0 ]
 then
 	echo "Okay."
@@ -9,7 +10,6 @@ else
 fi
 
 STAGE1_MAX_SIZE=446
-STAGE1_BINARY="stage1.bin"
 if [ $(stat -c%s $STAGE1_BINARY) -gt $STAGE1_MAX_SIZE ]
 then
 	echo "ERR: Stage1 binary too big. Exiting..."
