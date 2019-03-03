@@ -10,9 +10,21 @@ DEFINE_MSG msgLoadPartitionData, 'Loading partition data'
 DEFINE_MSG msgLoadBpb, 'Loading BIOS Parameter Block'
 DEFINE_MSG msgLoadGdt, 'Setting up Global Descriptor Table'
 DEFINE_MSG msgEnterProtected, 'Entering protected mode'
+DEFINE_MSG msg_load_bootstrap, 'Loading bootstrap'
+DEFINE_MSG err_fat_table, 'Error: Cannot load FAT table'
+DEFINE_MSG err_path_boot, 'Error: Cannot find /boot directory'
+DEFINE_MSG err_path_bootstrap, 'Error: Cannot find /boot/bootstrp.bin'
+DEFINE_MSG err_cluster_read, 'Error: Unable to read FAT cluster sector'
+DEFINE_MSG err_bootstrap_too_big, 'Error: Bootstrap size too big'
+DEFINE_MSG err_boostrap_read, 'Error: Cannot load bootstrap'
 
 g_first_data_sector dw 0
 g_partition_offset dw 0
+
+path_boot db 'BOOT'
+path_boot_len equ $ - path_boot
+path_bootstrap db 'BOOTSTRPBIN'
+path_bootstrap_len equ $ - path_bootstrap
 
 start:
   PRINT msgLoadPartitionData
@@ -55,12 +67,27 @@ load_partition_data:
   cmp ax, 0
   jne error
   add sp, 6
-  mov ax, bios_parameter_block
 
-  ; get sector of the root directory
-  ; note: there will be used some 32 bit instructions
-  ; nasm should automatically use the operand size override prefix
+  ; read FAT table
+  mov ax, [g_partition_offset]
+  add ax, [bpb_reserved_sector_count]
+  push ax
+  push 1
+  push fat_table
+  call disk_read
+  cmp ax, 0
+  je lpd_fat_noerror
+  ERROR err_fat_table
+  lpd_fat_noerror:
+  add sp, 6
+
+  mov ax, WORD [fat_table + 8]
+  mov bx, WORD [fat_table + 10]
+
+  ; get first data sector
+  ; needed to calculate sector of N cluster
   xor eax, eax
+  xor ebx, ebx
   xor ecx, ecx
   mov ax, [bpb_table_size_16]
   cmp eax, 0
@@ -72,13 +99,186 @@ load_partition_data:
   add ax, [bpb_reserved_sector_count] 
   mov [g_first_data_sector], ax ; now we have first_data_sector
 
+  ; TODO move below to another function!
   push DWORD [bpb_root_cluster]
+  push path_boot
+  push path_boot_len
+  call find_name_in_cluster
+  cmp eax, 0
+  jne lpd_path_boot_noerror
+  ERROR err_path_boot
+  lpd_path_boot_noerror:
+  add sp, 8 ; 4 bytes root_cluster!
+
+  push eax ; /boot cluster
+  push path_bootstrap
+  push path_bootstrap_len
+  call find_name_in_cluster
+  cmp eax, 0
+  jne lpd_path_bootstrap_noerror
+  ERROR err_path_bootstrap
+  lpd_path_bootstrap_noerror:
+  add sp, 8
+
+  mov ecx, ebx ; size in ebx
+  shr ecx, 16
+  cmp ecx, 0
+  je lpd_boostrap_size_noerror
+  ERROR err_bootstrap_too_big ; unfortunately, only 2 bytes size supported for now
+  lpd_boostrap_size_noerror:
+
+  push eax
   call get_first_sector_of_cluster
   add sp, 4
+
+  PRINT msg_load_bootstrap
+  ; bootstrap sector
+  push ax
+  
+  ; need to calculate bytes size to sector size
+  mov ax, bx
+  mov bx, 512
+  div bx 
+  and ax, 0x00ff
+  add ax, 1
+
+  ;ready, load!
+  push ax
+  push bootstrap_address
+  call disk_read
+  add sp, 6
+  cmp ax, 0
+  je lpd_bootstrap_read_noerror
+  ERROR err_boostrap_read
+  lpd_bootstrap_read_noerror:
 
   popa
   pop bp
   ret
+
+; args 4b cluster number, name to find, name size
+; ret eax: cluster number where found the name
+;		   0 on error
+;     ebx: target size
+find_name_in_cluster:
+  push bp
+  mov bp, sp
+
+  push DWORD 0
+  %define ret_cluster bp - 4
+
+  push DWORD 0
+  %define ret_size bp - 8
+
+  push 0
+  %define cluster_ptr bp - 10
+
+  push 0
+  %define i bp - 12
+
+  push DWORD 0
+  %define current_cluster bp - 14
+
+  %define name_size bp + 4
+  %define name_to_find bp + 6
+  %define cluster_number bp + 8 ; 4 bytes!
+
+  pusha
+
+  mov eax, [cluster_number]
+  mov [current_cluster], eax
+  xor eax, eax
+  fnic_read_cluster_loop:
+	; get sector nb
+	push DWORD [current_cluster]
+	call get_first_sector_of_cluster
+	add sp, 4
+
+	; read sector
+	push ax
+	push 1
+	push fat_cluster_entry
+	call disk_read
+	add sp, 6
+	cmp ax, 0
+	je fnic_disk_noerror
+	ERROR err_cluster_read
+	fnic_disk_noerror:
+	
+	; ax counter (i), dx pointer at current cluster entry
+	mov ax, [i]
+	xor dx, dx
+	fnic_parse_cluster_loop:
+	  ; parse cluster entries
+	  mov si, [name_to_find]
+
+	  mov dx, ax
+	  imul dx, 32 ; cluster entry size
+	  add dx, fat_cluster_entry
+	  mov di, dx
+
+	  ; check first byte for an entry correctness
+	  cmp BYTE [di], 0 ; no entry
+	  je fnic_end_of_cluster
+	  cmp BYTE [di], 0xe5 ; unused
+	  je fnic_bad_entry
+		; we're good compare first 11 bytes (name)
+		cld ; direction flag: left to right (clear)
+		mov cx, [name_size]
+		repe cmpsb
+		cmp cx, 0
+		jne fnic_bad_entry
+		  ; comparison ok, we still need to check for spaces padding
+		  mov cx, 11
+		  sub cx, [name_size]
+		  mov si, fnic_spaces
+		  repe cmpsb
+		  cmp cx, 0
+		  jne fnic_bad_entry
+			; found!
+			mov di, dx
+			mov bx, [di + 20] ; hi 2 bytes of cluster nb
+			shl ebx, 16
+			mov bx, [di + 26] ; lo 2 bytes of cluster nb
+			mov [ret_cluster], ebx
+			mov ebx, [di + 28] ; size
+			mov [ret_size], ebx
+			jmp fnic_end
+	  fnic_bad_entry:
+	  inc ax
+	  jmp fnic_parse_cluster_loop
+
+	fnic_end_of_cluster:
+	; read the FAR entry for current cluster
+	mov eax, fat_table
+	mov ebx, [current_cluster]
+	imul ebx, 4
+	add eax, ebx
+	mov ebx, [eax]
+	; if it's and or bad cluster - not found, end loop
+	and ebx, 0x0fffffff
+	cmp ebx, 0x0ffffff7
+	jge fnic_end_not_found
+	; otherwise the value is the next cluster in chain
+	mov [current_cluster], ebx
+	xor eax, eax
+	xor ebx, ebx
+	mov [i], WORD 0
+	jmp fnic_read_cluster_loop
+	
+  fnic_end_not_found:
+  mov [ret_cluster], DWORD 0
+
+  fnic_end:
+  popa
+  add sp, 8
+  pop ebx
+  pop eax
+  pop bp
+  ret
+
+  fnic_spaces times 11 db 0x20
+	
 
 ; args: 4 byte cluster number
 ; return: ax
@@ -95,14 +295,12 @@ get_first_sector_of_cluster:
 
   mov eax, [cluster_number]
   sub eax, 2
-  mov bl, [bpb_sectors_per_cluster]
   xor ebx, ebx
+  mov bl, [bpb_sectors_per_cluster]
   imul eax, ebx
   add ax, [g_first_data_sector]
   add ax, [g_partition_offset]
   mov [ret_val], ax
-
-  call printr
 
   popa
   pop ax ; ret_val
@@ -121,6 +319,8 @@ protected_mode:
   mov gs, ax
   mov ss, ax
   mov esp, 0x10000 ; move the stack pointer right after already loaded BIOS stuff
+
+  jmp bootstrap_address
  
 hang:
   jmp hang
@@ -128,6 +328,13 @@ hang:
 
 
 ; structures
+fat_table:
+  times 512 db 0
+
+fat_cluster_entry:
+  times 512 db 0
+  
+
 bios_parameter_block:
   times 13 db 0
   bpb_sectors_per_cluster db 0
@@ -204,3 +411,8 @@ gdt_descriptor:
 [BITS 32]
 exit:
   jmp exit
+
+; THIS HAS TO BE THE LAST ONE!
+; this is the place where the bootstrap will be loaded
+[BITS 16]
+bootstrap_address:

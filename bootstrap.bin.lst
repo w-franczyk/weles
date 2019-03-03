@@ -10,3 +10,5 @@
      5 00000005 C60042                  mov [eax], BYTE 'B'
      6 00000008 B801800B00              mov eax, 0xb8001
      7 0000000D C6001B                  mov [eax], BYTE 0x1b
+     8                                  hang:
+     9 00000010 E9FBFFFFFF                jmp hang

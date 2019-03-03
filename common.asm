@@ -12,7 +12,7 @@ disk_address_packet:
 ; macros
 %macro DEFINE_MSG 2
   %1 db %2, 0xd, 0xa
-  %1Len equ $ - %1
+  %1_len equ $ - %1
 %endmacro
 
 DEFINE_MSG msgError, 'Error!'
@@ -20,11 +20,17 @@ DEFINE_MSG msgDone, 'Done!'
 
 %macro PRINT 1
   push %1
-  push %1Len
+  push %1_len
   call print
   add sp, 4
 %endmacro
 
+%macro ERROR 1
+  push %1
+  push %1_len
+  jmp print_error
+  add sp, 4
+%endmacro
 
 
 ; args: start_block, size, target
@@ -104,6 +110,11 @@ print:
 
   ret
 
+; args: same as print
+print_error:
+  call print
+  jmp exit
+
 ; args: value, out str
 printr_save:
   push bp
@@ -152,8 +163,6 @@ printr_save:
   ret
 
 printr:
-  pusha
-
   push ax
   push s_ax
   call printr_save
@@ -179,7 +188,6 @@ printr:
   call print
   add sp, 4
 
-  popa
   ret
   
   
