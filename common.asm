@@ -163,6 +163,8 @@ printr_save:
   ret
 
 printr:
+  pusha
+
   push ax
   push s_ax
   call printr_save
@@ -188,6 +190,7 @@ printr:
   call print
   add sp, 4
 
+  popa
   ret
   
   

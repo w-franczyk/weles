@@ -1,0 +1,11 @@
+     1                                  [BITS 32]
+     2                                  begin:
+     3 00000000 B800800B00              mov eax, 0xb8000
+     4 00000005 C60042                  mov [eax], BYTE 'B'
+     5 00000008 B801800B00              mov eax, 0xb8001
+     6 0000000D C6001B                  mov [eax], BYTE 0x1b
+     7                                  hang:
+     8 00000010 E9FBFFFFFF                jmp hang
+     9                                  
+    10 00000015 00<rept>                times 4048 db 0
+    11                                  

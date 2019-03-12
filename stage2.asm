@@ -120,6 +120,7 @@ load_partition_data:
   lpd_path_bootstrap_noerror:
   add sp, 8
 
+  ; size really needed?
   mov ecx, ebx ; size in ebx
   shr ecx, 16
   cmp ecx, 0
@@ -127,34 +128,72 @@ load_partition_data:
   ERROR err_bootstrap_too_big ; unfortunately, only 2 bytes size supported for now
   lpd_boostrap_size_noerror:
 
-  push eax
-  call get_first_sector_of_cluster
-  add sp, 4
-
-  PRINT msg_load_bootstrap
-  ; bootstrap sector
-  push ax
   
-  ; need to calculate bytes size to sector size
-  mov ax, bx
-  mov bx, 512
-  div bx 
-  and ax, 0x00ff
-  add ax, 1
-
-  ;ready, load!
-  push ax
-  push bootstrap_address
-  call disk_read
+  PRINT msg_load_bootstrap
+  push eax ; first cluster of a bootstrap file
+  push bootstrap_address ; destination
+  call read_file
   add sp, 6
-  cmp ax, 0
-  je lpd_bootstrap_read_noerror
-  ERROR err_boostrap_read
-  lpd_bootstrap_read_noerror:
+
 
   popa
   pop bp
   ret
+
+;args: 4b start cluster, destination address
+read_file:
+  push bp
+  mov bp, sp
+
+  %define destination bp + 4
+  %define start_cluster bp + 6 ; 4 bytes!
+
+  pusha
+
+  xor ecx, ecx
+  mov ecx, [start_cluster]
+  xor di, di
+  mov di, [destination]
+
+  rf_loop:
+	push ecx
+	call get_first_sector_of_cluster
+	add sp, 4
+
+	push ax ; bootstrap sector
+	xor dx, dx
+	mov dl, [bpb_sectors_per_cluster]
+	;mov dl, 1
+	push dx
+	push di ; destination
+	call disk_read
+	add sp, 6
+	cmp ax, 0
+	je rf_bootstrap_read_noerror
+	  ERROR err_boostrap_read
+	rf_bootstrap_read_noerror:
+
+	; move destination pointer
+	imul dx, 512
+	add di, dx
+	mov dx, di
+
+	; read the FAR entry for current cluster
+	mov ebx, ecx ; current cluster
+	imul ebx, 4
+	mov ecx, fat_table
+	add ecx, ebx
+	mov ebx, [ecx]
+	; if it's an end or bad cluster - not found, end loop
+	and ebx, 0x0fffffff
+	mov ecx, ebx ; new current cluster
+	cmp ebx, 0x0ffffff7
+	jl rf_loop
+
+  popa
+  pop bp
+  ret
+
 
 ; args 4b cluster number, name to find, name size
 ; ret eax: cluster number where found the name
