@@ -1,15 +1,14 @@
-NASM = nasm
-NASM_OPT = -Wall -O0
+include ../../Makefile.inc
 
-SRC = $(wildcard *.asm)
-OUT = bootstrap.bin
+BOOTSTRAP_BINARY = bootstrap.bin
 
-$(OUT): *.asm
-	$(NASM) $(NASM_OPT) $< -o $@ -l $@.lst
+build: $(BOOTSTRAP_BINARY)
 
-build: $(OUT)
-
-build-vdisk:
+vdisk: build
 	./mount.sh
-	sudo cp $(OUT) /mnt/boot/bootstrp.bin
+	sudo cp $(BOOTSTRAP_BINARY) /mnt/boot/bootstrp.bin
 	./umount.sh
+
+clean:
+	$(ASM_CLEAN_TYPICAL)
+	-./umount.sh
