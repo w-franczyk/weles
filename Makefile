@@ -1,10 +1,8 @@
 MODULES = bootloader kernel
 
 .PHONY: build
-build:
-	for dir in $(MODULES); do \
-	  (cd $$dir; ${MAKE}); \
-	done
+build: $(MODULES)
+	$(MAKE) -C $<
 
 .PHONY: all
 all: build
