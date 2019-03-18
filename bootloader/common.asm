@@ -21,7 +21,6 @@ DEFINE_MSG msgDone, 'Done!'
   push %1
   push %1_len
   jmp print_error
-  add sp, 4
 %endmacro
 
 error: ; print 'Error' and exit
@@ -71,6 +70,8 @@ print:
 ; args: same as print
 print_error:
   call print
+  add sp, 4
+  call printr
   jmp exit
 
 ; args: value, out str

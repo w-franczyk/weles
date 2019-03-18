@@ -14,6 +14,7 @@ DEFINE_MSG msgLoadGdt, 'Setting up Global Descriptor Table'
 DEFINE_MSG msgEnterProtected, 'Entering protected mode'
 DEFINE_MSG msg_load_bootstrap, 'Loading bootstrap'
 DEFINE_MSG err_fat_table, 'Error: Cannot load FAT table'
+DEFINE_MSG err_fat_offset_too_big, 'Error: attampted to read to big FAT table offset. Finish freakin TODOs!'
 DEFINE_MSG err_path_boot, 'Error: Cannot find /boot directory'
 DEFINE_MSG err_path_bootstrap, 'Error: Cannot find /boot/bootstrp.bin'
 DEFINE_MSG err_cluster_read, 'Error: Unable to read FAT cluster sector'
@@ -135,6 +136,15 @@ load_partition_data:
 
   
   PRINT msg_load_bootstrap
+
+  ; TODO: make read any FAT offset possible
+  mov ebx, eax
+  imul ebx, 4
+  cmp ebx, FAT_SECTORS_MAX * 512
+  jle lpd_fat_offset_ok
+	ERROR err_fat_offset_too_big
+  lpd_fat_offset_ok:
+
   push eax ; first cluster of a bootstrap file
   push bootstrap_address ; destination
   call read_file
@@ -249,6 +259,7 @@ find_name_in_cluster:
 	fnic_disk_noerror:
 	
 	; ax counter (i), dx pointer at current cluster entry
+
 	mov ax, [i]
 	xor dx, dx
 	fnic_parse_cluster_loop:
@@ -292,13 +303,13 @@ find_name_in_cluster:
 	  jmp fnic_parse_cluster_loop
 
 	fnic_end_of_cluster:
-	; read the FAR entry for current cluster
+	; read the FAT entry for current cluster
 	mov eax, fat_table
 	mov ebx, [current_cluster]
 	imul ebx, 4
 	add eax, ebx
 	mov ebx, [eax]
-	; if it's and or bad cluster - not found, end loop
+	; if it's end or bad cluster - not found, end loop
 	and ebx, 0x0fffffff
 	cmp ebx, 0x0ffffff7
 	jge fnic_end_not_found
