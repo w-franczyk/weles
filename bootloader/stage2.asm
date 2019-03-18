@@ -77,7 +77,7 @@ load_partition_data:
   mov ax, [g_partition_offset]
   add ax, [bpb_reserved_sector_count]
   push ax
-  push 1
+  push FAT_SECTORS_MAX
   push fat_table
   call disk_read
   cmp ax, 0
@@ -169,7 +169,7 @@ read_file:
 	xor dx, dx
 	mov dl, [bpb_sectors_per_cluster]
 	push dx
-	push di ; destination
+	push di ; destination	
 	call disk_read
 	add sp, 6
 	cmp ax, 0
@@ -182,7 +182,7 @@ read_file:
 	add di, dx
 	mov dx, di
 
-	; read the FAR entry for current cluster
+	; read the FAT entry for current cluster
 	mov ebx, ecx ; current cluster
 	imul ebx, 4
 	mov ecx, fat_table
@@ -372,7 +372,7 @@ hang:
 
 ; structures
 fat_table:
-  times 512 db 0
+  times 512 * FAT_SECTORS_MAX db 0
 
 fat_cluster_entry:
   times 512 db 0
