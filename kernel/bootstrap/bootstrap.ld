@@ -1,0 +1,7 @@
+OUTPUT_FORMAT(elf32-i386)
+ENTRY(_Z5bmainv)
+
+SECTIONS
+{
+  . = 1K;
+}

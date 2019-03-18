@@ -374,7 +374,7 @@ protected_mode:
   mov ss, ax
   mov esp, 0x10000 ; move the stack pointer right after already loaded BIOS stuff
 
-  jmp bootstrap_address
+  jmp bootstrap_address + 1024 ; .text area will always be at 1KB offset in bootstrap.bin
  
 hang:
   jmp hang

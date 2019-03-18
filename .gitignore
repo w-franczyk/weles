@@ -1,2 +1,5 @@
 *.bin
 *.bin.lst
+*.o
+*.o.lst
+.gdb_history
