@@ -55,8 +55,23 @@ v/zero of=disk.img bs=1M count=100
   - https://en.wikipedia.org/wiki/Design_of_the_FAT_file_system - szczegolowe wyjasnienie
   - https://wiki.osdev.org/FAT - elegancko opisane jak czytac FAT
 
+=================================================================
+
+- Ogolne:
+  - https://wiki.osdev.org/What_order_should_I_make_things_in
+
+
 - GCC cross compiling:
   - jak skompilowac kompilator, GCC cross compiler: https://wiki.osdev.org/GCC_Cross-Compiler
   - jak skompilowac hello world: https://wiki.osdev.org/Bare_Bones
   - przyklad1: https://github.com/stevej/osdev/blob/master/loader/link.ld
   - przyklad2: http://www.osdever.net/bkerndev/Docs/basickernel.htm
+
+- libc/libk
+  - ogolnie o implementacjach libc: https://wiki.osdev.org/C_Library
+  - newlib: https://wiki.osdev.org/Porting_Newlib
+    - syscalls jakie potrzebuje newlib: https://sourceware.org/newlib/libc.html#Syscalls
+
+
+- I/O
+  - screen: https://wiki.osdev.org/Printing_To_Screen

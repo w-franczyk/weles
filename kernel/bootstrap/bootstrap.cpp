@@ -1,8 +1,14 @@
-extern "C" void p();
+#include <io/Screen.h>
+
+// extern "C" void p();
 
 int bmain()
 {
-  p();
+//  p();
+
+  const char* s = "asd";
+  Screen screen;
+  screen.print(s, 3);
 
   for (;;)
   {
