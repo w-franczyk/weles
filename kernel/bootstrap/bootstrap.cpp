@@ -6,9 +6,8 @@ int bmain()
 {
 //  p();
 
-  const char* s = "asd";
   Screen screen;
-  screen.print(s, 3);
+  screen.print("halo halo!!");
 
   for (;;)
   {

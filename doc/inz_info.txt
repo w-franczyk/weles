@@ -41,6 +41,7 @@ v/zero of=disk.img bs=1M count=100
   - target remote localhost:1234
 
 - protected mode: programming guide rozdzialy 9.8 i 9.9
+  - dobry tutorial http://skelix.net/skelixos/tutorial02_en.html
 - Global Descriptior Table:
   - to tabelka definiujaca segmenty pamieci
   - https://en.wikipedia.org/wiki/Global_Descriptor_Table

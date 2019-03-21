@@ -5,10 +5,10 @@ BOOTSTRAP_OBJECT = bootstrap_high.o
 BOOTSTRAP_SRC = bootstrap.cpp
 
 $(BOOTSTRAP_OBJECT): $(BOOTSTRAP_SRC)
-	i686-elf-g++ -I../ -c $(BOOTSTRAP_SRC) -o $(BOOTSTRAP_OBJECT) -ffreestanding -Wall -Wextra -fno-exceptions -fno-rtti -masm=intel
+	i686-elf-g++ -I../ -c $(BOOTSTRAP_SRC) -o $(BOOTSTRAP_OBJECT) -fPIC -ffreestanding -Wall -Wextra -fno-exceptions -fno-rtti -masm=intel -m32
 
 $(BOOTSTRAP_BINARY): $(BOOTSTRAP_OBJECT) bootstrap_low.o bootstrap.ld
-	i686-elf-g++ -T bootstrap.ld -o $(BOOTSTRAP_BINARY) -ffreestanding -nostdlib $(BOOTSTRAP_OBJECT) bootstrap_low.o -lgcc
+	i686-elf-g++ -T bootstrap.ld -o $(BOOTSTRAP_BINARY) -fPIC -ffreestanding -nostdlib $(BOOTSTRAP_OBJECT) bootstrap_low.o -lgcc -m32
 
 build: $(BOOTSTRAP_BINARY)
 
