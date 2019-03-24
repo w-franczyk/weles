@@ -1,3 +1,9 @@
+- zrodla:
+  - wiki.osdev.org
+  - https://littleosbook.github.io/
+  - http://skelix.net/skelixos/tutorial03_en.html
+
+
 ------- tworzenie wirtualnego hdd
 - https://linux.die.net/man/1/dd, bs=wielkosc "bloku"? count=ilosc blokow
 - DOS partition table vs GPT:
@@ -76,3 +82,4 @@ v/zero of=disk.img bs=1M count=100
 
 - I/O
   - screen: https://wiki.osdev.org/Printing_To_Screen
+    - 0xb8000 to memory mapped io. moze tez byc io port. https://littleosbook.github.io/#interacting-with-the-hardware

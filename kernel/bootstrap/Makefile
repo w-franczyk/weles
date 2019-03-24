@@ -1,16 +1,11 @@
 include ../../Makefile.inc
 
-BOOTSTRAP_BINARY = bootstrap.bin
-BOOTSTRAP_OBJECT = bootstrap_high.o
-BOOTSTRAP_SRC = bootstrap.cpp
-
-$(BOOTSTRAP_OBJECT): $(BOOTSTRAP_SRC)
-	i686-elf-g++ -I../ -c $(BOOTSTRAP_SRC) -o $(BOOTSTRAP_OBJECT) -fPIC -ffreestanding -Wall -Wextra -fno-exceptions -fno-rtti -masm=intel -m32
-
-$(BOOTSTRAP_BINARY): $(BOOTSTRAP_OBJECT) bootstrap_low.o bootstrap.ld
-	i686-elf-g++ -T bootstrap.ld -o $(BOOTSTRAP_BINARY) -fPIC -ffreestanding -nostdlib $(BOOTSTRAP_OBJECT) bootstrap_low.o -lgcc -m32
+BOOTSTRAP_BINARY := bootstrap.bin
 
 build: $(BOOTSTRAP_BINARY)
+
+$(BOOTSTRAP_BINARY): $(OBJ_FILES)
+	$(GCC) -T bootstrap.ld -o $(BOOTSTRAP_BINARY) $(LDFLAGS) $(OBJ_FILES) $(LIBS)
 
 vdisk: build
 	./mount.sh
@@ -20,7 +15,3 @@ vdisk: build
 clean:
 	$(ASM_CLEAN_TYPICAL)
 	-./umount.sh
-
-
-bootstrap_low.o: bootstrap.asm
-	$(ASM) $(ASM_OPTIONS) -felf32 $< -o bootstrap_low.o -l bootstrap_low.o.lst

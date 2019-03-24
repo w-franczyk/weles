@@ -1,4 +1,4 @@
-#include <io/Screen.h>
+#include <io/Vga.h>
 
 // extern "C" void p();
 
@@ -6,8 +6,8 @@ int bmain()
 {
 //  p();
 
-  Screen screen;
-  screen.print("halo halo!!");
+  Vga vga;
+  vga.print("halo halo!!");
 
   for (;;)
   {

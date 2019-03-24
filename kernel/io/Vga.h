@@ -2,7 +2,7 @@
 
 #include <libk/cstdlib>
 
-class Screen
+class Vga
 {
 public:
   enum class Color : std::uint8_t
@@ -14,14 +14,15 @@ public:
     Red,
     Magenta,
     Brown,
-    White,
-    Grey,
+    LightGrey,
+    DarkGrey,
     LightBlue,
+    LightGreen,
     LightCyan,
     LightRed,
     LightMagenta,
-    Yellow,
-    BrightWhite
+    LightBrown,
+    White
   };
 
   struct LineParams
@@ -29,7 +30,7 @@ public:
     bool blinking = false;
     Color bgcolor = Color::Black;
     bool bright = false;
-    Color fgcolor = Color::White;
+    Color fgcolor = Color::Magenta;
   };
 
   void print(const char* s)
@@ -58,8 +59,8 @@ public:
     const std::uint8_t paramsValue = getParamsValue(params);
     while (*s != 0)
     {
-      *(m_writeBuff++) = *s++;
-      *(m_writeBuff++) = paramsValue;
+      *(m_frameBuff++) = *s++;
+      *(m_frameBuff++) = paramsValue;
     }
   }
 
@@ -72,7 +73,7 @@ private:
            static_cast<std::uint8_t>(params.fgcolor);
   }
 
-  std::uint8_t* m_writeBuff = reinterpret_cast<std::uint8_t*>(0xb8000);
+  std::uint8_t* m_frameBuff = reinterpret_cast<std::uint8_t*>(0xb8000);
 
   // default values
   const unsigned m_lines = 25;
