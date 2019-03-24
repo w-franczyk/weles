@@ -1,8 +1,10 @@
 %define STAGE1_BASE 0x7c00
-%define STACK_ADDRESS 0x7ffe ; grows down
-%define SYSTEM_INFO 0x8000
-%define STAGE2_BASE 0x8200
-%define BOOSTRAP_BASE 0x8800
+%define STACK_ADDRESS 0x7ffe ; grows down, 512 bytes for STAGE1
+%define SYSTEM_INFO 0x8000 ; 512 bytes for bootloader STACK, 1KB used so far
+%define STAGE2_BASE 0x8300 ; 1024 bytes fo system info, 2KB used so far
+%define BOOTSTRAP_STACK 0xBB70 ; 26KB for STAGE2, 28KB used so far
+%define BOOTSTRAP_BASE 0xFC00 ; 4KB for BOOTSTRAP_STACK, 32KB used so far
+; 33KB for BOOTSTRAP, 65KB max (and used) for realmode so the right bound is 0x18000
 
 ; maximum size of sectors can be read for FAT structure
 ; this number determines the size of space reserved

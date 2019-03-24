@@ -68,24 +68,24 @@ load_partition_data:
   mov [g_partition_offset], ax
   push WORD [g_partition_offset]
   push 1
-  push bios_parameter_block
+  push DWORD bios_parameter_block
   call disk_read
   cmp ax, 0
   jne error
-  add sp, 6
+  add sp, 8
 
   ; read FAT table
   mov ax, [g_partition_offset]
   add ax, [bpb_reserved_sector_count]
   push ax
   push FAT_SECTORS_MAX
-  push fat_table
+  push DWORD fat_table
   call disk_read
   cmp ax, 0
   je lpd_fat_noerror
   ERROR err_fat_table
   lpd_fat_noerror:
-  add sp, 6
+  add sp, 8
 
   mov ax, WORD [fat_table + 8]
   mov bx, WORD [fat_table + 10]
@@ -146,29 +146,28 @@ load_partition_data:
   lpd_fat_offset_ok:
 
   push eax ; first cluster of a bootstrap file
-  push bootstrap_address ; destination
+  push DWORD BOOTSTRAP_BASE ; destination
   call read_file
-  add sp, 6
-
+  add sp, 8
 
   popa
   pop bp
   ret
 
-;args: 4b start cluster, destination address
+;args: 4b start cluster, 4b destination address
 read_file:
   push bp
   mov bp, sp
 
-  %define destination bp + 4
-  %define start_cluster bp + 6 ; 4 bytes!
+  %define destination bp + 4 ; 4 bytes!
+  %define start_cluster bp + 8 ; 4 bytes!
 
   pusha
 
   xor ecx, ecx
   mov ecx, [start_cluster]
-  xor di, di
-  mov di, [destination]
+  xor edi, edi
+  mov edi, [destination]
 
   rf_loop:
 	push ecx
@@ -179,18 +178,17 @@ read_file:
 	xor dx, dx
 	mov dl, [bpb_sectors_per_cluster]
 	push dx
-	push di ; destination	
+	push edi ; destination	
 	call disk_read
-	add sp, 6
+	add sp, 8
 	cmp ax, 0
 	je rf_bootstrap_read_noerror
 	  ERROR err_boostrap_read
 	rf_bootstrap_read_noerror:
 
 	; move destination pointer
-	imul dx, 512
-	add di, dx
-	mov dx, di
+	imul edx, 512
+	add edi, edx
 
 	; read the FAT entry for current cluster
 	mov ebx, ecx ; current cluster
@@ -250,9 +248,9 @@ find_name_in_cluster:
 	; read sector
 	push ax
 	push 1
-	push fat_cluster_entry
+	push DWORD fat_cluster_entry
 	call disk_read
-	add sp, 6
+	add sp, 8
 	cmp ax, 0
 	je fnic_disk_noerror
 	ERROR err_cluster_read
@@ -372,9 +370,9 @@ protected_mode:
   mov fs, ax
   mov gs, ax
   mov ss, ax
-  mov esp, 0x10000 ; move the stack pointer right after already loaded BIOS stuff
+  mov esp, BOOTSTRAP_STACK ; move the stack pointer right after already loaded BIOS stuff
 
-  jmp bootstrap_address + 1024 ; .text area will always be at 1KB offset in bootstrap.bin
+  jmp BOOTSTRAP_BASE + 1024 ; .text area will always be at 1KB offset in bootstrap.bin
  
 hang:
   jmp hang
@@ -465,8 +463,3 @@ gdt_descriptor:
 [BITS 32]
 exit:
   jmp exit
-
-; THIS HAS TO BE THE LAST ONE!
-; this is the place where the bootstrap will be loaded
-[BITS 16]
-bootstrap_address:

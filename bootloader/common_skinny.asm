@@ -12,7 +12,7 @@ disk_address_packet:
 
 ; funcs
 
-; args: start_block, size, target
+; args: start_block, size, 4 bytes target
 ; return: ax - 0 on success, otherwise error code
 disk_read:
   push bp
@@ -27,19 +27,20 @@ disk_read:
   xor cx, cx
   xor dx, dx
 
-  mov bx, [ebp + 8]
+  mov bx, [ebp + 10]
   mov [dap_start_block], bx
-  mov bx, [ebp + 6]
+  mov bx, [ebp + 8]
   mov [dap_size], bx
-  mov bx, [ebp + 4]
-  mov [dap_target], bx
+  mov ebx, [ebp + 4]
+  mov [dap_target], ebx
+  xor ebx, ebx
 
   mov ah, 0x42 ; extended read
   mov dl, 0x80 ; drive number, TODO: CHECK!
   mov si, disk_address_packet
   int 0x13
   mov [return_val], ah 
-  
+ 
   popa
   pop ax
   pop bp

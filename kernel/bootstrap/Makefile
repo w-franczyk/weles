@@ -1,6 +1,7 @@
 include ../../Makefile.inc
 
 BOOTSTRAP_BINARY := bootstrap.bin
+LIBS += -lIo
 
 build: $(BOOTSTRAP_BINARY)
 

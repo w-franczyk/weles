@@ -59,8 +59,10 @@ print:
   mov al, 0x1 ; update cursor
   mov bl, 0x07 ; color light grey
   mov cx, [len] ; length
+  mov di, bp
   mov bp, [str] ; msg
   int 0x10
+  mov bp, di
 
   popa
   pop bp

@@ -23,11 +23,11 @@ _start:
 
   push 1 ; offset
   push 128 ; size, max stage2 size = 65k
-  push STAGE2_BASE ; address
+  push DWORD STAGE2_BASE ; address
   call disk_read
   cmp ax, 0
   jne exit
-  add sp, 6
+  add sp, 8
 
   jmp STAGE2_BASE
 
