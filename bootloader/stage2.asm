@@ -146,7 +146,7 @@ load_partition_data:
   lpd_fat_offset_ok:
 
   push eax ; first cluster of a bootstrap file
-  push DWORD BOOTSTRAP_BASE ; destination
+  push DWORD BOOTSTRAP_BASE_SEGMENTED ; destination
   call read_file
   add sp, 8
 
@@ -372,7 +372,7 @@ protected_mode:
   mov ss, ax
   mov esp, BOOTSTRAP_STACK ; move the stack pointer right after already loaded BIOS stuff
 
-  jmp BOOTSTRAP_BASE + 1024 ; .text area will always be at 1KB offset in bootstrap.bin
+  jmp BOOTSTRAP_BASE_PHYSICAL + 1024 ; .text area will always be at 1KB offset in bootstrap.bin
  
 hang:
   jmp hang

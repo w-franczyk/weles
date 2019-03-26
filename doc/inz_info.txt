@@ -28,6 +28,9 @@ v/zero of=disk.img bs=1M count=100
   - https://wiki.osdev.org/MBR_(x86)
 
 
+- przerwania BIOS http://www.ctyme.com/intr/int.htm
+
+
 - ia32
   - pdf basic architecture:
     - tryby pracy (real, protected: 3.1 Modes of Operation
