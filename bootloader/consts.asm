@@ -9,8 +9,3 @@
 %define BOOTSTRAP_BASE_SEGMENTED 0x10000000
 
 ; 33KB for BOOTSTRAP, 65KB max (and used) for realmode so the right bound is 0x18000
-
-; maximum size of sectors can be read for FAT structure
-; this number determines the size of space reserved
-; for it (FAT_SECTORS_MAX * 512)
-%define FAT_SECTORS_MAX 10

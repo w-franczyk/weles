@@ -74,22 +74,6 @@ load_partition_data:
   jne error
   add sp, 8
 
-  ; read FAT table
-  mov ax, [g_partition_offset]
-  add ax, [bpb_reserved_sector_count]
-  push ax
-  push FAT_SECTORS_MAX
-  push DWORD fat_table
-  call disk_read
-  cmp ax, 0
-  je lpd_fat_noerror
-  ERROR err_fat_table
-  lpd_fat_noerror:
-  add sp, 8
-
-  mov ax, WORD [fat_table + 8]
-  mov bx, WORD [fat_table + 10]
-
   ; get first data sector
   ; needed to calculate sector of N cluster
   xor eax, eax
@@ -134,17 +118,7 @@ load_partition_data:
   ERROR err_bootstrap_too_big ; unfortunately, only 2 bytes size supported for now
   lpd_boostrap_size_noerror:
 
-  
   PRINT msg_load_bootstrap
-
-  ; TODO: make read any FAT offset possible
-  mov ebx, eax
-  imul ebx, 4
-  cmp ebx, FAT_SECTORS_MAX * 512
-  jle lpd_fat_offset_ok
-	ERROR err_fat_offset_too_big
-  lpd_fat_offset_ok:
-
   push eax ; first cluster of a bootstrap file
   push DWORD BOOTSTRAP_BASE_SEGMENTED ; destination
   call read_file
@@ -153,6 +127,63 @@ load_partition_data:
   popa
   pop bp
   ret
+
+; args: 4b cluster number
+; ret: eax: value of the cluster from the fat cluster chain (next cluster)
+get_fat_cluster_value:
+  push bp
+  mov bp, sp
+
+  push DWORD 0
+  %define ret_cluster_value bp - 4
+
+  %define cluster_number bp + 4 ; 4 bytes!
+
+  pusha
+
+  ; extract sector offset from cluster_number
+  mov edx, 0
+  mov eax, [cluster_number]
+  mov ecx, 128 ; 128 FAT entries in one sector
+  div ecx
+  mov [cluster_number], edx
+  cmp eax, 0xffff ; eax is qutionent, it's our sector offset
+  jle gfcv_no_fat_offset_error
+    ERROR err_fat_offset_too_big
+  gfcv_no_fat_offset_error:
+
+  ; read sector which contains needed cluster_number
+  xor ecx, ecx
+  mov cx, [g_partition_offset]
+  add cx, [bpb_reserved_sector_count] 
+  add cx, ax ; sector offset, it's cluster_number / 128
+  push cx
+  push 1
+  push DWORD fat_table   
+  call disk_read
+  cmp ax, 0
+  je gfcv_fat_noerror
+	ERROR err_fat_table
+  gfcv_fat_noerror:
+  add sp, 8
+
+  ; process the extracted value
+  mov eax, [cluster_number]
+  imul eax, 4
+  mov [cluster_number], eax
+  mov eax, fat_table
+  add eax, [cluster_number]
+   
+  mov ebx, eax
+  mov eax, [ebx]
+  mov [ret_cluster_value], eax
+  and DWORD [ret_cluster_value], 0x0fffffff
+
+  popa
+  pop eax ; ret
+  pop bp
+  ret
+
 
 ;args: 4b start cluster, 4b destination address
 read_file:
@@ -191,15 +222,12 @@ read_file:
 	add edi, edx
 
 	; read the FAT entry for current cluster
-	mov ebx, ecx ; current cluster
-	imul ebx, 4
-	mov ecx, fat_table
-	add ecx, ebx
-	mov ebx, [ecx]
+	push ecx ; current cluster
+	call get_fat_cluster_value
+	add sp, 4
+	mov ecx, eax ; new current cluster
 	; if it's an end or bad cluster - not found, end loop
-	and ebx, 0x0fffffff
-	mov ecx, ebx ; new current cluster
-	cmp ebx, 0x0ffffff7
+	cmp ecx, 0x0ffffff7
 	jl rf_loop
 
   popa
@@ -302,13 +330,11 @@ find_name_in_cluster:
 
 	fnic_end_of_cluster:
 	; read the FAT entry for current cluster
-	mov eax, fat_table
-	mov ebx, [current_cluster]
-	imul ebx, 4
-	add eax, ebx
-	mov ebx, [eax]
+	push DWORD [current_cluster]
+	call get_fat_cluster_value
+	add sp, 4
+	mov ebx, eax ; new current cluster
 	; if it's end or bad cluster - not found, end loop
-	and ebx, 0x0fffffff
 	cmp ebx, 0x0ffffff7
 	jge fnic_end_not_found
 	; otherwise the value is the next cluster in chain
@@ -381,7 +407,7 @@ hang:
 
 ; structures
 fat_table:
-  times 512 * FAT_SECTORS_MAX db 0
+  times 512 db 0
 
 fat_cluster_entry:
   times 512 db 0

@@ -30,7 +30,7 @@ public:
     bool blinking = false;
     Color bgcolor = Color::Black;
     bool bright = false;
-    Color fgcolor = Color::LightGreen;
+    Color fgcolor = Color::White;
   };
 
   void print(const char* s);
