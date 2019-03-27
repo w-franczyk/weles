@@ -1,4 +1,5 @@
 # USEFUL VARS DEFINITIONS ==============================================================
+SHELL := /bin/bash
 ROOT_DIR := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 BIN_DIR := $(ROOT_DIR)/bin
 BIN_LIB_DIR := $(ROOT_DIR)/bin/lib
@@ -12,9 +13,7 @@ OBJ_FILES := $(addprefix $(BUILD_DIR)/,$(OBJ_FILES))
 
 GCC := i686-elf-g++
 INCLUDE_DIR := $(ROOT_DIR)/kernel
-#GCCFLAGS := -fPIC -ffreestanding -Wall -Wextra -fno-exceptions -fno-rtti -masm=intel -m32
 GCCFLAGS := -ffreestanding -Wall -Wextra -fno-exceptions -fno-rtti -masm=intel -m32
-#LDFLAGS := -fPIC -ffreestanding -nostdlib -m32
 LDFLAGS := -ffreestanding -nostdlib -m32
 LIBS := -L$(BIN_LIB_DIR) -lgcc
 

@@ -7,11 +7,11 @@ let SECTOR_COUNT=$LAST_SECTOR-$FIRST_SECTOR
 let STAGE2_MAX_SIZE=$SECTOR_COUNT*$SECTOR_SIZE
 if [ $(stat -c%s $STAGE2_BINARY) -gt $STAGE2_MAX_SIZE ]
 then
-	echo "ERR: Stage1 binary too big. Exiting..."
+	echo "ERR: Stage2 binary too big. Exiting..."
 	exit 2
 fi
 
-echo "INFO: flushing the old stage 1 code"
+echo "INFO: flushing the old stage 2 code"
 dd if=/dev/zero of=$VIRTUAL_DISK conv=notrunc bs=$SECTOR_SIZE seek=$FIRST_SECTOR count=$SECTOR_COUNT
-echo "INFO: writing the new stage 1 code at MBR"
+echo "INFO: writing the new stage 2 code at sector $FIRST_SECTOR"
 dd if=$STAGE2_BINARY of=$VIRTUAL_DISK conv=notrunc bs=$SECTOR_SIZE seek=$FIRST_SECTOR
