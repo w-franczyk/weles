@@ -1,5 +1,7 @@
 #include "Vga.h"
 
+#include <io/PortIo.h>
+
 void Vga::print(const char* s)
 {
   LineParams params;
@@ -23,6 +25,12 @@ void Vga::print(const char* s, Color fgcolor, Color bgcolor)
 
 void Vga::print(const char* s, const LineParams& params)
 {
+  unsigned short pos = 165;
+  outb(PortCommand, CmdMoveCursorHigh);
+  outb(PortData, pos >> 8);
+  outb(PortCommand, CmdMoveCursorLow);
+  outb(PortData, pos & 0x00FF);
+
   const std::uint8_t paramsValue = getParamsValue(params);
   while (*s != 0)
   {

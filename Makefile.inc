@@ -36,7 +36,7 @@ build: $(TARGETLIB)
 
 $(TARGETLIB): $(OBJ_FILES)
 	mkdir -p $(BIN_LIB_DIR)
-	$(AR) rcs $(TARGETLIB) $<
+	$(AR) rcs $(TARGETLIB) $(OBJ_FILES)
 
 clean-output:
 	rm -f $(TARGETLIB)

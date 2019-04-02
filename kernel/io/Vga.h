@@ -24,13 +24,25 @@ public:
     LightBrown,
     White
   };
+  
+  enum IoPort : std::uint16_t
+  {
+    PortCommand = 0x3d4,
+    PortData = 0x3d5
+  };
+
+  enum IoCommand : std::uint8_t
+  {
+    CmdMoveCursorHigh = 14,
+    CmdMoveCursorLow = 15
+  };
 
   struct LineParams
   {
     bool blinking = false;
     Color bgcolor = Color::Black;
     bool bright = false;
-    Color fgcolor = Color::White;
+    Color fgcolor = Color::LightMagenta;
   };
 
   void print(const char* s);
