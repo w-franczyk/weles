@@ -34,8 +34,8 @@ void Vga::print(const char* s, const LineParams& params)
   const std::uint8_t paramsValue = getParamsValue(params);
   while (*s != 0)
   {
-    *(m_frameBuff++) = *s++;
-    *(m_frameBuff++) = paramsValue;
+    *(m_framePtr++) = *s++;
+    *(m_framePtr++) = paramsValue;
   }
 }
 
