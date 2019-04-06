@@ -1,5 +1,6 @@
+; param: port, value
+; ret: void
 global outb
-
 outb:
   push ebp
   mov ebp, esp
@@ -14,4 +15,11 @@ outb:
 
   popa
   pop ebp
+  ret
+
+; param: port, value
+; ret: al
+global inb
+inb:
+  mov eax, 160
   ret

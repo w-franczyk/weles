@@ -45,26 +45,17 @@ public:
     Color fgcolor = Color::LightMagenta;
   };
 
-  Vga()
-  {
-      initCursorPos();
-  }
-
+  Vga();
+  void initCursorPos();
+  std::uint16_t getCursorPos() const;
   void print(const char* s);
   void print(const char* s, Color fgcolor);
   void print(const char* s, Color fgcolor, Color bgcolor);
   void print(const char* s, const LineParams& params);
-
-  std::uint16_t getCursorPos() const { return (m_framePtr - m_frameBuffer) / 2; }
-
-  void initCursorPos()
-  {
-      std::uint16_t pos = 320;
-      m_framePtr = m_frameBuffer + pos * 2; // 2 bytes per one cell
-  }
+  void poll() const;
 
 private:
-  std::uint8_t getParamsValue(const LineParams& params);
+  std::uint8_t getParamsValue(const LineParams& params) const;
 
   std::uint8_t* m_framePtr = m_frameBuffer;
   std::uint16_t m_cursorPos = 0;
