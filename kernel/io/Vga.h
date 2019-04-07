@@ -27,14 +27,14 @@ public:
   
   enum IoPort : std::uint16_t
   {
-    PortCommand = 0x3d4,
-    PortData = 0x3d5
+    PortVgaResource = 0x3d4,
+    PortVgaData = 0x3d5
   };
 
-  enum IoCommand : std::uint8_t
+  enum IoResource : std::uint8_t
   {
-    CmdMoveCursorHigh = 14,
-    CmdMoveCursorLow = 15
+    ResCursorPosHigh = 14,
+    ResCursorPosLow = 15
   };
 
   struct LineParams
@@ -42,7 +42,7 @@ public:
     bool blinking = false;
     Color bgcolor = Color::Black;
     bool bright = false;
-    Color fgcolor = Color::LightMagenta;
+    Color fgcolor = Color::LightGrey;
   };
 
   Vga();
@@ -55,9 +55,10 @@ public:
   void poll() const;
 
 private:
+  void addLine();
   std::uint8_t getParamsValue(const LineParams& params) const;
 
-  std::uint8_t* m_framePtr = m_frameBuffer;
+  std::uint8_t* m_framePtr = nullptr;
   std::uint16_t m_cursorPos = 0;
 
   // default values

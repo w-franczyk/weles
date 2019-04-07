@@ -10,7 +10,10 @@ Vga::Vga()
 
 void Vga::initCursorPos()
 {
-  std::uint16_t pos = inb(0);
+  outb(PortVgaResource, ResCursorPosHigh);
+  std::uint16_t pos = inb(PortVgaData) << 8;
+  outb(PortVgaResource, ResCursorPosLow);
+  pos |= inb(PortVgaData);
   m_framePtr = m_frameBuffer + pos * 2; // 2 bytes per one cell
 }
 
@@ -45,8 +48,22 @@ void Vga::print(const char* s, const LineParams& params)
   const std::uint8_t paramsValue = getParamsValue(params);
   while (*s != 0)
   {
-    *(m_framePtr++) = *s++;
-    *(m_framePtr++) = paramsValue;
+    switch (*s)
+    {
+    case '\n':
+      m_framePtr += (m_columns - (getCursorPos() % m_columns)) * 2;
+      break;
+    default:
+      *(m_framePtr++) = *s;
+      *(m_framePtr++) = paramsValue;
+      break;
+    }
+
+    // not needed for now
+    /* if (getCursorPos() > m_lines * m_columns) */
+    /*   addLine(); */
+
+    ++s;
   }
   
   poll();
@@ -55,10 +72,17 @@ void Vga::print(const char* s, const LineParams& params)
 void Vga::poll() const
 {
   std::uint16_t pos = getCursorPos();
-  outb(PortCommand, CmdMoveCursorHigh);
-  outb(PortData, pos >> 8);
-  outb(PortCommand, CmdMoveCursorLow);
-  outb(PortData, pos & 0x00FF);
+  outb(PortVgaResource, ResCursorPosHigh);
+  outb(PortVgaData, pos >> 8);
+  outb(PortVgaResource, ResCursorPosLow);
+  outb(PortVgaData, pos & 0x00FF);
+}
+
+void Vga::addLine()
+{
+  /* memcpy(m_frameBuffer, */
+  /*        m_frameBuffer + m_columns * 2, */
+  /*        m_frameBuffer + m_columns * m_lines * 2 - m_columns * 2); */
 }
 
 std::uint8_t Vga::getParamsValue(const LineParams& params) const

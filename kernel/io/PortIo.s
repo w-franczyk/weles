@@ -17,9 +17,13 @@ outb:
   pop ebp
   ret
 
-; param: port, value
+; param: port
 ; ret: al
 global inb
 inb:
-  mov eax, 160
+  xor eax, eax
+  push edx
+  mov dx, [esp + 8] ; port param
+  in al, dx
+  pop edx
   ret

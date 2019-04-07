@@ -13,7 +13,7 @@ OBJ_FILES := $(addprefix $(BUILD_DIR)/,$(OBJ_FILES))
 
 GCC := i686-elf-g++
 INCLUDE_DIR := $(ROOT_DIR)/kernel
-GCCFLAGS := -ffreestanding -Wall -Wextra -fno-exceptions -fno-rtti -masm=intel -m32
+GCCFLAGS := -ffreestanding -Wall -Wextra -fno-exceptions -fno-rtti -masm=intel -m32 -g
 LDFLAGS := -ffreestanding -nostdlib -m32
 LIBS := -L$(BIN_LIB_DIR) -lgcc
 
@@ -22,6 +22,7 @@ ASMFLAGS += -Wall -O0
 ASM_CLEAN_TYPICAL := rm -f *.o; rm -f *.bin; rm -f *.bin.lst; rm -rf $(BUILD_DIR)
 
 AR := i686-elf-ar
+OBJCOPY := i686-elf-objcopy
 
 
 

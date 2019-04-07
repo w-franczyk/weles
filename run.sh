@@ -1,1 +1,1 @@
-qemu-system-x86_64 disk.img
+qemu-system-i386 disk.img
