@@ -6,7 +6,7 @@ LIBS += -lIo
 build: $(BOOTSTRAP_BINARY)
 
 $(BOOTSTRAP_BINARY): $(OBJ_FILES)
-	$(GCC) -T bootstrap.ld -o $(BOOTSTRAP_BINARY) $(LDFLAGS) $(OBJ_FILES) $(LIBS)
+	$(GXX) -T bootstrap.ld -o $(BOOTSTRAP_BINARY) $(LDFLAGS) $(OBJ_FILES) $(LIBS)
 
 vdisk: build
 	./mount.sh

@@ -6,14 +6,17 @@ BIN_LIB_DIR := $(ROOT_DIR)/bin/lib
 BUILD_DIR := ./build
 
 H_FILES := $(wildcard *.h)
-SRC_FILES := $(wildcard *.cpp) $(wildcard *.s)
+SRC_FILES := $(wildcard *.cpp) $(wildcard *.s) $(wildcard *.c)
 OBJ_FILES := $(SRC_FILES:.cpp=.o)
 OBJ_FILES := $(OBJ_FILES:.s=.o)
+OBJ_FILES := $(OBJ_FILES:.c=.o)
 OBJ_FILES := $(addprefix $(BUILD_DIR)/,$(OBJ_FILES))
 
-GCC := i686-elf-g++
+GCC := i686-elf-gcc
+GCCFLAGS := -ffreestanding -Wall -Wextra -masm=intel -m32 -g
+GXX := i686-elf-g++
+GXXFLAGS := $(GCCFLAGS) -fno-rtti -fno-exceptions
 INCLUDE_DIR := $(ROOT_DIR)/kernel
-GCCFLAGS := -ffreestanding -Wall -Wextra -fno-exceptions -fno-rtti -masm=intel -m32 -g
 LDFLAGS := -ffreestanding -nostdlib -m32
 LIBS := -L$(BIN_LIB_DIR) -lgcc
 
@@ -52,7 +55,11 @@ endif
 
 $(BUILD_DIR)/%.o: %.cpp
 	mkdir -p $(BUILD_DIR)
-	$(GCC) -I $(INCLUDE_DIR) -c $< -o $(BUILD_DIR)/$(<:.cpp=.o) $(GCCFLAGS)
+	$(GXX) -I $(INCLUDE_DIR) -c $< -o $(BUILD_DIR)/$(<:.cpp=.o) $(GXXFLAGS)
+
+$(BUILD_DIR)/%.o: %.c
+	mkdir -p $(BUILD_DIR)
+	$(GCC) -I $(INCLUDE_DIR) -c $< -o $(BUILD_DIR)/$(<:.c=.o) $(GCCFLAGS)
 
 $(BUILD_DIR)/%.o: %.s
 	mkdir -p $(BUILD_DIR)
