@@ -84,6 +84,12 @@ v/zero of=disk.img bs=1M count=100
     - syscalls jakie potrzebuje newlib: https://sourceware.org/newlib/libc.html#Syscalls
 
 
-- I/O
+- VGA
   - screen: https://wiki.osdev.org/Printing_To_Screen
     - 0xb8000 to memory mapped io. moze tez byc io port. https://littleosbook.github.io/#interacting-with-the-hardware
+
+- ATA: https://wiki.osdev.org/ATA_PIO_Mode
+  - https://wiki.osdev.org/ATA_PIO_Mode#Detection_and_Initialization
+    - sprawdzamy floating bus pierwsze!
+    - nie sprawdzamy adresow IO ATA, zakladamy ze wszystko elegancko wg standardu. TODO: znalezc standard!
+    - IDENTIFY: ustandaryzowana taka sama komenda dla wszystki typów: PATA, PATAPI, SATA, SATAPI
