@@ -41,12 +41,6 @@ bool init()
   vga.print(di.modelNumber);
   vga.print("\n");
 
-  if (!ata.isLba48Supported())
-  {
-    vga.print("Error: ATA LBA48 not supported\n");
-    return false;
-  }
-
   return true;
 }
 

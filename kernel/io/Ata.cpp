@@ -32,8 +32,8 @@ Ata::InitStatus Ata::init()
   
   // reset sector selectors 
   outb(RegSectorCount, 0);
-  outb(RegSectorNumber, 0);
   outb(RegLbaLow, 0);
+  outb(RegLbaMid, 0);
   outb(RegLbaHigh, 0);
   
   // identify
@@ -44,7 +44,7 @@ Ata::InitStatus Ata::init()
   // wait for not busy
   while ((inb(RegStatus) & StBsyBit) != 0);
 
-  if (inb(RegLbaLow) != 0 || inb(RegLbaHigh) != 0)
+  if (inb(RegLbaMid) != 0 || inb(RegLbaHigh) != 0)
     return InitStatus::NotAtaDevice;
 
   // wait for the drive finish initialization until done or err
@@ -60,4 +60,20 @@ Ata::InitStatus Ata::init()
 
   m_initialized = true;
   return InitStatus::Ok;
+}
+
+Ata::Result Ata::read(unsigned int sector, std::uint8_t count, std::uint8_t* outBuff)
+{
+  if (!m_initialized)
+    return Result::NotInitialized;
+
+  if (sector > 0x0fffffff) // only Lba28 supported so far
+    return Result::SectorNbTooBig;
+
+  outb(RegSectorCount, count);
+  outb(RegLbaLow, );
+  outb(RegLbaMid, );
+  outb(RegLbaHigh, );
+
+  return Result::Ok;
 }

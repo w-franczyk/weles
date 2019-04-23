@@ -61,7 +61,6 @@ public:
   };
 
   InitStatus init();
-  bool isLba48Supported() { return m_driverIdentifier.lba48 & 0x400; }
 
   DriverIdentifier& test() { return m_driverIdentifier; }
 
