@@ -14,8 +14,10 @@ Ata::InitStatus Ata::init()
   if (inb(RegStatus) == noDrivesByte)
     return InitStatus::NoDrivesDetected;
 
-  constexpr unsigned driveSelectorMaster = 0xa0;
-  outb(RegDriveHead, driveSelectorMaster); // select primary master, the only supported for now
+  // select primary master (the only supported for now) and LBA mode
+  constexpr unsigned masterDriveBit = 0xa0;
+  constexpr unsigned lbaModeBit = 0x40;
+  outb(RegDriveHead, masterDriveBit | lbaModeBit);
 
   // ATA specs says that it's good to give some time to the drive before
   // executing a next command once the drive selection has been performed.

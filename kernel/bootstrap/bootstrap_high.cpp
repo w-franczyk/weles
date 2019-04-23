@@ -12,16 +12,16 @@ bool init()
   switch (ata.init())
   {
   case Ata::InitStatus::NoDrivesDetected:
-    vga.print("Error: no drives has been detected");
+    vga.print("Error: no drives has been detected\n");
     return false;
   case Ata::InitStatus::NoPrimaryMaster:
-    vga.print("Error: Primary Master has not been detected");
+    vga.print("Error: Primary Master has not been detected\n");
     return false;
   case Ata::InitStatus::NotAtaDevice:
-    vga.print("Error: Primary Master is not an ATA device");
+    vga.print("Error: Primary Master is not an ATA device\n");
     return false;
   case Ata::InitStatus::Error:
-    vga.print("Error: Failure during Primary Master initialization");
+    vga.print("Error: Failure during Primary Master initialization\n");
     return false;
   default:
     vga.print("Done\n");
@@ -41,7 +41,13 @@ bool init()
   vga.print(di.modelNumber);
   vga.print("\n");
 
+  if (!ata.isLba48Supported())
+  {
+    vga.print("Error: ATA LBA48 not supported\n");
+    return false;
+  }
 
+  return true;
 }
 
 int bmain()
