@@ -1,12 +1,12 @@
 include ../../Makefile.inc
 
 BOOTSTRAP_BINARY := bootstrap.bin
-LIBS += -lIo
+LIBS += -lIo -lFatfs
 
 build: $(BOOTSTRAP_BINARY)
 
 $(BOOTSTRAP_BINARY): $(OBJ_FILES)
-	$(GXX) -T bootstrap.ld -o $(BOOTSTRAP_BINARY) $(LDFLAGS) $(OBJ_FILES) $(LIBS)
+	$(GCC) -T bootstrap.ld -o $(BOOTSTRAP_BINARY) $(LDFLAGS) $(OBJ_FILES) $(LIBS)
 
 vdisk: build
 	./mount.sh

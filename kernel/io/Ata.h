@@ -11,8 +11,8 @@ class Ata
     RegError = 0x1f1,
     RegFeatures = 0x1f1,
     RegSectorCount = 0x1f2,
-    RegSectorNumber = 0x1f3,
-    RegLbaLow = 0x1f4,
+    RegLbaLow = 0x1f3,
+    RegLbaMid = 0x1f4,
     RegLbaHigh = 0x1f5,
     RegDriveHead = 0x1f6,
     RegStatus = 0x1f7,
@@ -21,6 +21,7 @@ class Ata
 
   enum Command
   {
+    CmdRead = 0x20,
     CmdIdentify = 0xec
   };
 
@@ -60,14 +61,23 @@ public:
     Ok
   };
 
+  enum class Result
+  {
+    NotInitialized,
+    SectorNbTooBig,
+    Error,
+    Ok
+  };
+
   InitStatus init();
-  bool isLba48Supported() { return m_driverIdentifier.lba48 & 0x400; }
+  bool isInitialized() const { return m_initialized; }
+  Result read(unsigned int sector, std::uint8_t count, std::uint8_t* outBuff);
 
   DriverIdentifier& test() { return m_driverIdentifier; }
 
+  static Ata& instance();
+
 private:
-  // TODO: handle when the heap supported
-  /* static bool m_initialized; */
   DriverIdentifier m_driverIdentifier;
   bool m_initialized = false;
 };

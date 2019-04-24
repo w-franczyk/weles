@@ -15,7 +15,7 @@ OBJ_FILES := $(addprefix $(BUILD_DIR)/,$(OBJ_FILES))
 GCC := i686-elf-gcc
 GCCFLAGS := -ffreestanding -Wall -Wextra -masm=intel -m32 -g
 GXX := i686-elf-g++
-GXXFLAGS := $(GCCFLAGS) -fno-rtti -fno-exceptions
+GXXFLAGS := $(GCCFLAGS) -fno-rtti -fno-exceptions -fno-threadsafe-statics -g
 INCLUDE_DIR := $(ROOT_DIR)/kernel
 LDFLAGS := -ffreestanding -nostdlib -m32
 LIBS := -L$(BIN_LIB_DIR) -lgcc

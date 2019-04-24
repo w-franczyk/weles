@@ -2,5 +2,5 @@
 .PHONY: build clean vdisk
 build clean vdisk:
 	$(MAKE) -C io $@
-	$(MAKE) -C bootstrap $@
 	$(MAKE) -C thirdparty/fatfs $@
+	$(MAKE) -C bootstrap $@

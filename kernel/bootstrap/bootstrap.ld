@@ -7,6 +7,7 @@ SECTIONS
   . = 0x10400;
   .text 0x10400 : AT(0x10400) {
     code = .;
+    *(.bootstrap_init)
     *(.text)
     *(.rodata)
     . = ALIGN(4096);
