@@ -400,6 +400,11 @@ protected_mode:
   mov esp, BOOTSTRAP_STACK ; move the stack pointer right after already loaded BIOS stuff
 
   call ata_init
+  push DWORD 2048
+  push 1
+  push BOOTSTRAP_BASE_PHYSICAL
+  call ata_read
+  add esp, 12
   jmp hang
 
   ;jmp BOOTSTRAP_BASE_PHYSICAL + 1024 ; .text area will always be at 1KB offset in bootstrap.bin
