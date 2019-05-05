@@ -118,12 +118,7 @@ load_partition_data:
   je lpd_boostrap_size_noerror
   ERROR err_bootstrap_too_big ; unfortunately, only 2 bytes size supported for now
   lpd_boostrap_size_noerror:
-
-  PRINT msg_load_bootstrap
-  push eax ; first cluster of a bootstrap file
-  push DWORD BOOTSTRAP_BASE_SEGMENTED ; destination
-  call read_file
-  add sp, 8
+  mov [kernel_start_sector], eax
 
   popa
   pop bp
@@ -184,57 +179,6 @@ get_fat_cluster_value:
   pop eax ; ret
   pop bp
   ret
-
-
-;args: 4b start cluster, 4b destination address
-read_file:
-  push bp
-  mov bp, sp
-
-  %define destination bp + 4 ; 4 bytes!
-  %define start_cluster bp + 8 ; 4 bytes!
-
-  pusha
-
-  xor ecx, ecx
-  mov ecx, [start_cluster]
-  xor edi, edi
-  mov edi, [destination]
-
-  rf_loop:
-	push ecx
-	call get_first_sector_of_cluster
-	add sp, 4
-
-	push ax ; bootstrap sector
-	xor dx, dx
-	mov dl, [bpb_sectors_per_cluster]
-	push dx
-	push edi ; destination	
-	call disk_read
-	add sp, 8
-	cmp ax, 0
-	je rf_bootstrap_read_noerror
-	  ERROR err_boostrap_read
-	rf_bootstrap_read_noerror:
-
-	; move destination pointer
-	imul edx, 512
-	add edi, edx
-
-	; read the FAT entry for current cluster
-	push ecx ; current cluster
-	call get_fat_cluster_value
-	add sp, 4
-	mov ecx, eax ; new current cluster
-	; if it's an end or bad cluster - not found, end loop
-	cmp ecx, 0x0ffffff7
-	jl rf_loop
-
-  popa
-  pop bp
-  ret
-
 
 ; args 4b cluster number, name to find, name size
 ; ret eax: cluster number where found the name
@@ -389,6 +333,143 @@ get_first_sector_of_cluster:
 
 
 [BITS 32]
+%macro ERROR32 1
+  mov edi, %1
+  jmp exit
+%endmacro
+
+;args: 4b start cluster, 4b destination address
+read_file:
+  push ebp
+  mov ebp, esp
+
+  %define destination ebp + 8
+  %define start_cluster ebp + 12
+
+  pusha
+
+  xor ecx, ecx
+  mov ecx, [start_cluster]
+  xor edi, edi
+  mov edi, [destination]
+
+  .rf_loop:
+	push ecx
+	call get_first_sector_of_cluster32
+	add esp, 4
+
+	push eax ; bootstrap sector
+	xor edx, edx
+	mov dl, [bpb_sectors_per_cluster]
+	push edx
+	push edi ; destination	
+	call ata_read
+	add esp, 12
+	cmp eax, 0
+	je .rf_bootstrap_read_noerror
+	  ERROR32 10
+	.rf_bootstrap_read_noerror:
+
+	; move destination pointer
+	imul edx, 512
+	add edi, edx
+
+	; read the FAT entry for current cluster
+	push ecx ; current cluster
+	call get_fat_cluster_value32
+	add esp, 4
+	mov ecx, eax ; new current cluster
+	; if it's an end or bad cluster - not found, end loop
+	cmp ecx, 0x0ffffff7
+	jl .rf_loop
+
+  popa
+  pop ebp
+  ret
+
+; args: byte cluster number
+; return: eax
+get_first_sector_of_cluster32:
+  push ebp
+  mov ebp, esp
+
+  push DWORD 0
+  %define ret_val ebp - 4
+
+  pusha
+
+  %define cluster_number ebp + 8
+
+  mov eax, [cluster_number]
+  sub eax, 2
+  xor ebx, ebx
+  mov bl, [bpb_sectors_per_cluster]
+  imul eax, ebx
+  add ax, [g_first_data_sector]
+  add ax, [g_partition_offset]
+  mov [ret_val], eax
+
+  popa
+  pop eax ; ret_val
+  pop ebp
+  ret
+
+; args: cluster number
+; ret: eax: value of the cluster from the fat cluster chain (next cluster)
+get_fat_cluster_value32:
+  push ebp
+  mov ebp, esp
+
+  push DWORD 0
+  %define ret_cluster_value ebp - 4
+
+  %define cluster_number ebp + 8
+
+  pusha
+
+  ; extract sector offset from cluster_number
+  mov edx, 0
+  mov eax, [cluster_number]
+  mov ecx, 128 ; 128 FAT entries in one sector
+  div ecx
+  mov [cluster_number], edx
+  cmp eax, 0xffff ; eax is qutionent, it's our sector offset
+  jle .gfcv_no_fat_offset_error
+    ERROR32 11
+  .gfcv_no_fat_offset_error:
+
+  ; read sector which contains needed cluster_number
+  xor ecx, ecx
+  mov cx, [g_partition_offset]
+  add cx, [bpb_reserved_sector_count] 
+  add cx, ax ; sector offset, it's cluster_number / 128
+  push ecx
+  push DWORD 1
+  push DWORD fat_table   
+  call ata_read
+  cmp eax, 0
+  je .gfcv_fat_noerror
+	ERROR32 12
+  .gfcv_fat_noerror:
+  add esp, 12
+
+  ; process the extracted value
+  mov eax, [cluster_number]
+  imul eax, 4
+  mov [cluster_number], eax
+  mov eax, fat_table
+  add eax, [cluster_number]
+   
+  mov ebx, eax
+  mov eax, [ebx]
+  mov [ret_cluster_value], eax
+  and DWORD [ret_cluster_value], 0x0fffffff
+
+  popa
+  pop eax ; ret
+  pop ebp
+  ret
+
 protected_mode:
   ; set segment registers to data segment (0x10)
   mov ax, 0x10
@@ -400,14 +481,11 @@ protected_mode:
   mov esp, BOOTSTRAP_STACK ; move the stack pointer right after already loaded BIOS stuff
 
   call ata_init
-  push DWORD 2048
-  push 1
-  push BOOTSTRAP_BASE_PHYSICAL
-  call ata_read
-  add esp, 12
-  jmp hang
-
-  ;jmp BOOTSTRAP_BASE_PHYSICAL + 1024 ; .text area will always be at 1KB offset in bootstrap.bin
+  push DWORD [kernel_start_sector] ; first cluster of a bootstrap file
+  push DWORD BOOTSTRAP_BASE_PHYSICAL ; destination
+  call read_file
+  add esp, 8
+  jmp BOOTSTRAP_BASE_PHYSICAL + 1024 ; .text area will always be at 1KB offset in bootstrap.bin
  
 hang:
   jmp hang
@@ -496,5 +574,8 @@ gdt_descriptor:
   dd gdt ; gdt address
 
 [BITS 32]
+kernel_start_sector:
+  dd 0
+
 exit:
   jmp exit
