@@ -1,3 +1,4 @@
+[BITS 16]
 ; Note this is included in the stage 1.
 ; Only must-have code due to the size limit!
 

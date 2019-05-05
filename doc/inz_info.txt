@@ -93,3 +93,6 @@ v/zero of=disk.img bs=1M count=100
     - sprawdzamy floating bus pierwsze!
     - nie sprawdzamy adresow IO ATA, zakladamy ze wszystko elegancko wg standardu. TODO: znalezc standard!
     - IDENTIFY: ustandaryzowana taka sama komenda dla wszystki typów: PATA, PATAPI, SATA, SATAPI
+
+
+- GCC toolchain: https://wiki.osdev.org/OS_Specific_Toolchain

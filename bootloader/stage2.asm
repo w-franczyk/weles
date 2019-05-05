@@ -1,10 +1,11 @@
 %include "consts.asm"
-
 [ORG STAGE2_BASE]
 [BITS 16]
   jmp start
 
+%include "ataio.asm"
 %include "common.asm"
+[BITS 16]
 
 DEFINE_MSG msgBootVer, 'The bootloader'
 DEFINE_MSG msgWelcome, 'Welcome!'
@@ -398,7 +399,10 @@ protected_mode:
   mov ss, ax
   mov esp, BOOTSTRAP_STACK ; move the stack pointer right after already loaded BIOS stuff
 
-  jmp BOOTSTRAP_BASE_PHYSICAL + 1024 ; .text area will always be at 1KB offset in bootstrap.bin
+  call ata_init
+  jmp hang
+
+  ;jmp BOOTSTRAP_BASE_PHYSICAL + 1024 ; .text area will always be at 1KB offset in bootstrap.bin
  
 hang:
   jmp hang

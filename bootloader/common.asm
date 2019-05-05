@@ -1,3 +1,4 @@
+[BITS 16]
 %include "common_skinny.asm"
 
 ; funcs:
