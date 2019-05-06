@@ -3,4 +3,4 @@
 build clean vdisk:
 	$(MAKE) -C io $@
 	$(MAKE) -C thirdparty/fatfs $@
-	$(MAKE) -C bootstrap $@
+	$(MAKE) -C main $@

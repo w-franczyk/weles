@@ -17,7 +17,7 @@ DEFINE_MSG msg_load_bootstrap, 'Loading bootstrap'
 DEFINE_MSG err_fat_table, 'Error: Cannot load FAT table'
 DEFINE_MSG err_fat_offset_too_big, 'Error: attampted to read to big FAT table offset. Finish freakin TODOs!'
 DEFINE_MSG err_path_boot, 'Error: Cannot find /boot directory'
-DEFINE_MSG err_path_bootstrap, 'Error: Cannot find /boot/bootstrp.bin'
+DEFINE_MSG err_path_bootstrap, 'Error: Cannot find /boot/kernel.bin'
 DEFINE_MSG err_cluster_read, 'Error: Unable to read FAT cluster sector'
 DEFINE_MSG err_bootstrap_too_big, 'Error: Bootstrap size too big'
 DEFINE_MSG err_boostrap_read, 'Error: Cannot load bootstrap'
@@ -27,7 +27,7 @@ g_partition_offset dw 0
 
 path_boot db 'BOOT'
 path_boot_len equ $ - path_boot
-path_bootstrap db 'BOOTSTRPBIN'
+path_bootstrap db 'KERNEL  BIN'
 path_bootstrap_len equ $ - path_bootstrap
 
 start:
