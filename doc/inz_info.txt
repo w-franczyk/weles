@@ -102,3 +102,6 @@ v/zero of=disk.img bs=1M count=100
   - IRQ i przerwania systemowe nakładają się na siebie
   - są dwa Programmable Interrupt Controller (PIC) 8259A (https://en.wikipedia.org/wiki/Intel_8259). PIC1 jest od IRQ0-7, PIC2 od IRQ8-15.
     trzeba przeprogramować oba żeby nie nakładały się numery przerwań z systemowymi (http://skelix.net/skelixos/tutorial04_en.html)
+
+- zarządzanie pamięcią:
+  - https://wiki.osdev.org/Memory_management
