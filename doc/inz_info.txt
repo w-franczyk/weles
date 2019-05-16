@@ -102,6 +102,10 @@ v/zero of=disk.img bs=1M count=100
   - IRQ i przerwania systemowe nakładają się na siebie
   - są dwa Programmable Interrupt Controller (PIC) 8259A (https://en.wikipedia.org/wiki/Intel_8259). PIC1 jest od IRQ0-7, PIC2 od IRQ8-15.
     trzeba przeprogramować oba żeby nie nakładały się numery przerwań z systemowymi (http://skelix.net/skelixos/tutorial04_en.html)
+  - to jest układ wchodzący w skłąd standardu x86 stąd wszystko (jak np port) jest zdefiniowane _prawdopodobnie_ przez intela, nie przez standard płyty np
+  - zastąpiony przez APIC, jednak testos obsłuje tylko PIC
+  - https://wiki.osdev.org/8259_PIC, https://pdos.csail.mit.edu/6.828/2005/readings/hardware/8259A.pdf
+
 
 - zarządzanie pamięcią:
   - https://wiki.osdev.org/Memory_management
