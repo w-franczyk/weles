@@ -1,9 +1,12 @@
 #include <io/Ata.h>
 #include <io/Vga.h>
+#include <main/Interrupts.h>
+#include <main/Res.h>
 
+Interrupts interrupts;
 bool init()
 {
-  Vga vga;
+  Vga& vga = Res::getVga();
   vga.print("I AM THE KERNEL\n");
   vga.print("VGA Initialized\n");
   vga.print("Initializing ATA controller... ");
@@ -25,6 +28,8 @@ bool init()
   default:
     vga.print("Done\n");
   }
+
+  interrupts.init();
 
   /* auto& di = ata.test(); */
   /* di.serialNumber[19] = 0; */
@@ -67,8 +72,12 @@ bool init()
 
 int kmain()
 {
+  Vga vga;
+
+  Res::setVga(vga);
+
   init();
-  for (;;)
+  while (Res::run)
   {
   }
 

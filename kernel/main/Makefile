@@ -17,3 +17,8 @@ clean:
 	$(ASM_CLEAN_TYPICAL)
 	rm -f $(KERNEL_BINARY)
 	-./umount.sh
+
+# ISRs doesn't support float (coprocessor) operations
+$(BUILD_DIR)/Interrupts.o: Interrupts.cpp
+	mkdir -p $(BUILD_DIR)
+	$(COMPILE_CPP) -mno-80387

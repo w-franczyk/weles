@@ -15,7 +15,7 @@ OBJ_FILES := $(addprefix $(BUILD_DIR)/,$(OBJ_FILES))
 GCC := i686-elf-gcc
 GCCFLAGS := -ffreestanding -Wall -Wextra -masm=intel -m32 -g
 GXX := i686-elf-g++
-GXXFLAGS := $(GCCFLAGS) -fno-rtti -fno-exceptions -fno-threadsafe-statics -g
+GXXFLAGS := $(GCCFLAGS) -fno-rtti -fno-exceptions -fno-threadsafe-statics -m32 -g
 INCLUDE_DIR := $(ROOT_DIR)/kernel
 LDFLAGS := -ffreestanding -nostdlib -m32
 LIBS := -L$(BIN_LIB_DIR) -lgcc
@@ -52,10 +52,10 @@ endif
 
 
 # GENERAL TARGETS ==============================================================
-
+COMPILE_CPP = $(GXX) -I $(INCLUDE_DIR) -c $< -o $(BUILD_DIR)/$(<:.cpp=.o) $(GXXFLAGS)
 $(BUILD_DIR)/%.o: %.cpp
 	mkdir -p $(BUILD_DIR)
-	$(GXX) -I $(INCLUDE_DIR) -c $< -o $(BUILD_DIR)/$(<:.cpp=.o) $(GXXFLAGS)
+	$(COMPILE_CPP)
 
 $(BUILD_DIR)/%.o: %.c
 	mkdir -p $(BUILD_DIR)

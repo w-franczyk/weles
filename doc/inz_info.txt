@@ -3,6 +3,15 @@
   - https://littleosbook.github.io/
   - http://skelix.net/skelixos/tutorial03_en.html
 
+- POSIX1.2017 standard (Single UNIX specification v4 2018), IEEE Std 1003.1, 2017
+  - https://publications.opengroup.org/t101
+  - http://www.unix.org/version4/
+  - https://en.wikipedia.org/wiki/POSIX
+
+- System V ABI
+  - http://www.sco.com/developers/devspecs/abi386-4.pdf (oficjalne)
+  - https://github.com/hjl-tools/x86-psABI/wiki/X86-psABI (suplement)
+
 
 ------- tworzenie wirtualnego hdd
 - https://linux.die.net/man/1/dd, bs=wielkosc "bloku"? count=ilosc blokow
@@ -105,7 +114,11 @@ v/zero of=disk.img bs=1M count=100
   - to jest układ wchodzący w skłąd standardu x86 stąd wszystko (jak np port) jest zdefiniowane _prawdopodobnie_ przez intela, nie przez standard płyty np
   - zastąpiony przez APIC, jednak testos obsłuje tylko PIC
   - https://wiki.osdev.org/8259_PIC, https://pdos.csail.mit.edu/6.828/2005/readings/hardware/8259A.pdf
+  - https://wiki.osdev.org/Interrupt_Service_Routines
+  - ISR (Interrupts Service Routines) to funkcja wołana bezpośrednio z CPU gdy przyjdzie przerwanie. ISR mapuje się z IRQ w IDT (Interrupt Descriptor Table)
+  - ISR kończy się instrukcją iret, nie ret
 
 
-- zarządzanie pamięcią:
+- zarządzanie pamięcią (segmentacja i stronicowanie):
   - https://wiki.osdev.org/Memory_management
+  - Intel System Programming Guide (https://software.intel.com/sites/default/files/managed/a4/60/325384-sdm-vol-3abcd.pdf): 3. Protected-Mode Memory Management
