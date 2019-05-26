@@ -9,7 +9,7 @@ class InterruptDescriptor
   enum class GateType : std::uint8_t
   {
     Task = 0x5,
-    Interrupt = 0xe,
+    Interrupt = 0x8e,
     Trap = 0xf
   };
 

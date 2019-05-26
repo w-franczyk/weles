@@ -7,8 +7,8 @@
 
 void Interrupts::init()
 {
-  initIdt();
   initPic();
+  initIdt();
 
   //int a = 5 / 0;
   __asm__("int 0x80");
@@ -16,9 +16,9 @@ void Interrupts::init()
 
 void Interrupts::isrDefault(InterruptFrame*)
 {
-  Res::run = false;
+  /* Res::run = false; */
   // __asm__ ("cli;hlt\n\t");
-//  Res::getVga().print("interrupt!!!!\n");
+  Res::getVga().print("interrupt!!!!\n");
 }
 
 void Interrupts::initIdt()
@@ -283,7 +283,7 @@ void Interrupts::initIdt()
   m_idtPtr.size = sizeof(m_idt) - 1;
   m_idtPtr.ptr = m_idt;
 
-  __asm__("lidt %0" :: "m"(m_idt));
+  __asm__("lidt %0" :: "m"(m_idtPtr));
 }
 
 void Interrupts::initPic()
