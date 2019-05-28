@@ -275,7 +275,8 @@ class Interrupts
 
   enum PicCmd : std::uint8_t
   {
-    PicCmdInit = 0x11
+    PicCmdInit = 0x11,
+    EndOfInterrupt = 0x20
   };
 
 #pragma pack(push, 1)
