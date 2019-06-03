@@ -276,7 +276,7 @@ class Interrupts
   enum PicCmd : std::uint8_t
   {
     PicCmdInit = 0x11,
-    EndOfInterrupt = 0x20
+    PicCmdAck = 0x20
   };
 
 #pragma pack(push, 1)
@@ -291,11 +291,112 @@ public:
   Interrupts() = default;
   void init();
 
-  __attribute__((interrupt)) static void isrDefault(InterruptFrame*);
+  __attribute__((interrupt)) static void
+  isrDefault(InterruptFrame*);
+  
+  __attribute__((interrupt)) static void
+  isrException00Divide(InterruptFrame*);
+
+  __attribute__((interrupt)) static void
+  isrException01Debug(InterruptFrame*);
+
+  __attribute__((interrupt)) static void
+  isrException02Nmi(InterruptFrame*);
+
+  __attribute__((interrupt)) static void
+  isrException03Breakpoint(InterruptFrame*);
+
+  __attribute__((interrupt)) static void
+  isrException04Overflow(InterruptFrame*);
+
+  __attribute__((interrupt)) static void
+  isrException05BoundsCheck(InterruptFrame*);
+
+  __attribute__((interrupt)) static void
+  isrException06InvalidOpcode(InterruptFrame*);
+
+  __attribute__((interrupt)) static void
+  isrException07CoprocessorNotAvail(InterruptFrame*);
+
+  __attribute__((interrupt)) static void
+  isrException08DoubleFault(InterruptFrame*);
+
+  __attribute__((interrupt)) static void
+  isrException09CoprocessorOverrun(InterruptFrame*);
+
+  __attribute__((interrupt)) static void
+  isrException0aInvalidTss(InterruptFrame*);
+
+  __attribute__((interrupt)) static void
+  isrException0bSegmentNotPresent(InterruptFrame*);
+
+  __attribute__((interrupt)) static void
+  isrException0cStack(InterruptFrame*);
+
+  __attribute__((interrupt)) static void
+  isrException0dProtection(InterruptFrame*);
+
+  __attribute__((interrupt)) static void
+  isrException0ePageFault(InterruptFrame*);
+
+  __attribute__((interrupt)) static void
+  isrException0f(InterruptFrame*);
+
+  __attribute__((interrupt)) static void
+  isrException10CoprocessorError(InterruptFrame*);
+
+  __attribute__((interrupt)) static void
+  isrIrq0Timer(InterruptFrame*);
+
+  __attribute__((interrupt)) static void
+  isrIrq1Keyboard(InterruptFrame*);
+
+  __attribute__((interrupt)) static void
+  isrIrq2(InterruptFrame*);
+
+  __attribute__((interrupt)) static void
+  isrIrq3Com2(InterruptFrame*);
+
+  __attribute__((interrupt)) static void
+  isrIrq4Com1(InterruptFrame*);
+
+  __attribute__((interrupt)) static void
+  isrIrq5Lpt2(InterruptFrame*);
+
+  __attribute__((interrupt)) static void
+  isrIrq6Floppy(InterruptFrame*);
+
+  __attribute__((interrupt)) static void
+  isrIrq7Lpt1(InterruptFrame*);
+
+  __attribute__((interrupt)) static void
+  isrIrq8Cmos(InterruptFrame*);
+
+  __attribute__((interrupt)) static void
+  isrIrq9(InterruptFrame*);
+
+  __attribute__((interrupt)) static void
+  isrIrq10(InterruptFrame*);
+
+  __attribute__((interrupt)) static void
+  isrIrq11(InterruptFrame*);
+
+  __attribute__((interrupt)) static void
+  isrIrq12Ps2Mouse(InterruptFrame*);
+
+  __attribute__((interrupt)) static void
+  isrIrq13Coprocessor(InterruptFrame*);
+
+  __attribute__((interrupt)) static void
+  isrIrq14Ide0(InterruptFrame*);
+
+  __attribute__((interrupt)) static void
+  isrIrq15Ide1(InterruptFrame*);
 
 private:
   void initIdt();
   void initPic();
+  void unmaskHandledIrqs();
 
   std::uint64_t m_idt[256];
   IdtPtr m_idtPtr;
