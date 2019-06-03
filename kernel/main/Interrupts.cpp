@@ -129,7 +129,9 @@ void Interrupts::isrIrq0Timer(InterruptFrame*)
 
 void Interrupts::isrIrq1Keyboard(InterruptFrame*)
 {
-  Res::getVga().print("WARNING: Unhandled IRQ1\n");
+  Res::getVga().print("Got IRQ keyboard\n");
+  constexpr std::uint8_t keyboardPort = 0x60;
+  inb(keyboardPort);
   outb(Pic1PortCmd, PicCmdAck);
 }
 
@@ -549,6 +551,8 @@ void Interrupts::initPic()
 
 void Interrupts::unmaskHandledIrqs()
 {
-  outb(Pic1PortData, 0);
-  outb(Pic2PortData, 0);
+  constexpr auto keyboardBit = 0b00000010;
+  outb(Pic1PortData, 0xff ^ keyboardBit);
+  
+  __asm__("sti"); // enable irqs
 }
