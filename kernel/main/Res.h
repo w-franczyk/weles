@@ -1,6 +1,6 @@
 #pragma once
 
-class Vga;
+#include <io/Vga.h>
 
 class Res
 {

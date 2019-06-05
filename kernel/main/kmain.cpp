@@ -1,6 +1,7 @@
 #include <io/Ata.h>
 #include <io/Vga.h>
 #include <main/Interrupts.h>
+#include <main/Memory.h>
 #include <main/Res.h>
 
 Interrupts interrupts;
@@ -30,6 +31,8 @@ bool init()
   }
 
   interrupts.init();
+
+  Memory();
 
   /* auto& di = ata.test(); */
   /* di.serialNumber[19] = 0; */
