@@ -5,6 +5,7 @@
 #include <main/Res.h>
 
 Interrupts interrupts;
+Memory memory;
 bool init()
 {
   Vga& vga = Res::getVga();
@@ -32,7 +33,7 @@ bool init()
 
   interrupts.init();
 
-  Memory();
+  memory.init();
 
   /* auto& di = ata.test(); */
   /* di.serialNumber[19] = 0; */

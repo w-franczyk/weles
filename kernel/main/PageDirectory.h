@@ -29,8 +29,11 @@ public:
     static_assert(sizeof(*this) == sizeof(Entry) * 1024, "Incorrect size of PageDirectory");
   }
 
-  void addPageTable(
+  static constexpr std::size_t getAlign() { return m_align; }
+
+//  void addPageTable(
 
 private:
+  static constexpr std::size_t m_align = 4096;
   Entry m_entry[1024];
 };

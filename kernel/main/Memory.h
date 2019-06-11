@@ -25,4 +25,10 @@ class Memory
 #pragma pack(pop)
 
 public:
+  Memory() = default;
+  void init();
+
+private:
+  std::uint8_t m_kernelPageDirBuf[sizeof(PageDirectory) + PageDirectory::getAlign()];
+  PageDirectory* m_kernelPageDir = nullptr;
 };

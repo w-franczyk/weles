@@ -111,13 +111,6 @@ load_partition_data:
   lpd_path_bootstrap_noerror:
   add sp, 8
 
-  ; size really needed?
-  mov ecx, ebx ; size in ebx
-  shr ecx, 16
-  cmp ecx, 0
-  je lpd_boostrap_size_noerror
-  ERROR err_bootstrap_too_big ; unfortunately, only 2 bytes size supported for now
-  lpd_boostrap_size_noerror:
   mov [kernel_start_sector], eax
 
   popa
