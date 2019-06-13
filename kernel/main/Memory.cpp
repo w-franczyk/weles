@@ -24,6 +24,6 @@ void Memory::init()
     System::halt();
   } 
 
-  // TODO: PageDirectory constructor!
-
+  // the constructor has never been called
+  *m_kernelPageDir = PageDirectory();
 }
