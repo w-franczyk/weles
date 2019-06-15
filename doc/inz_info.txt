@@ -125,5 +125,6 @@ v/zero of=disk.img bs=1M count=100
   - Intel System Programming Guide (https://software.intel.com/sites/default/files/managed/a4/60/325384-sdm-vol-3abcd.pdf): 3. Protected-Mode Memory Management
   - https://wiki.osdev.org/Paging
   - http://skelix.net/skelixos/tutorial08_en.html !!!
+  - inny elegancki tutorial jak zainicjalizować stronicowanie: https://wiki.osdev.org/Setting_Up_Paging
   
 
