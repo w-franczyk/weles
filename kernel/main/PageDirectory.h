@@ -7,54 +7,36 @@
 #pragma pack(push, 1)
 class PageTableDescriptor
 {
-  enum AccessLevel
+  enum Bits
   {
-    AccessSupervisor = 0,
-    AccessUser = 1
-  };
-
-  enum Permission
-  {
-    ReadOnly = 0,
-    ReadWrite = 1
+    BitPresent        = 0b00000001,
+    BitReadWrite      = 0b00000010,
+    BitUserSupervisor = 0b00000100,
+    BitWriteThrough   = 0b00001000,
+    BitCacheDisable   = 0b00010000,
+    BitAccessed       = 0b00100000,
+    BitPageSize       = 0b10000000
   };
 
 public:
-  PageTableDescriptor() :
-    m_pageTableAddr(0),
-    unused1(0),
-    unused2(0),
-    m_pageSize(0),
-    unused3(0),
-    m_accessed(0),
-    m_cacheDisabled(0),
-    m_writeThrough(0),
-    m_accessLevel(AccessSupervisor),
-    m_permission(ReadWrite),
-    m_present(0)
+  PageTableDescriptor()
   {
+    setReadWrite();
     static_assert(sizeof(*this) == 4);
   }
 
-  void setAddress(std::size_t address) { m_pageTableAddr = address >> 12; }
-  void setPresent() { m_present = 1; }
-  void setReadOnly() { m_permission = ReadOnly; }
-  void setReadWrite() { m_permission = ReadWrite; }
-  void setUser() { m_accessLevel = AccessUser; }
-  void setSupervisor() { m_accessLevel = AccessSupervisor; }
+  void setAddress(std::size_t address)
+  {
+    m_descriptor = (address & 0xfffff000) | (m_descriptor & 0x00000fff);
+  }
+  void setPresent() { m_descriptor |= BitPresent; }
+  void setReadOnly() { m_descriptor &= ~BitReadWrite; }
+  void setReadWrite() { m_descriptor |= BitReadWrite; }
+  void setUser() { m_descriptor |= BitUserSupervisor; }
+  void setSupervisor() { m_descriptor &= ~BitUserSupervisor; }
 
 private:
-  std::uint32_t m_pageTableAddr : 20;
-  std::uint32_t unused1 : 3;
-  std::uint32_t unused2 : 1;
-  std::uint32_t m_pageSize : 1;
-  std::uint32_t unused3 : 1;
-  std::uint32_t m_accessed : 1;
-  std::uint32_t m_cacheDisabled : 1;
-  std::uint32_t m_writeThrough : 1;
-  std::uint32_t m_accessLevel : 1;
-  std::uint32_t m_permission : 1;
-  std::uint32_t m_present : 1;
+  std::uint32_t m_descriptor = 0;
 };
 #pragma pack(pop)
 

@@ -42,5 +42,5 @@ void Memory::init()
     m_kernelPageTable.pushBack(page);
   }
 
-  System::enablePaging(&m_kernelPageDir);  
+  System::enablePaging(m_kernelPageDir.getBuffer());  
 }

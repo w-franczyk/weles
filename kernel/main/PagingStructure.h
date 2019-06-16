@@ -10,7 +10,8 @@ public:
 
   static constexpr std::size_t getAlign() { return m_align; }
   static constexpr std::size_t getBufferSize() { return sizeof(EntryType) * m_entriesCnt; }
-
+  
+  const std::uint8_t* getBuffer() const { return reinterpret_cast<const std::uint8_t*>(m_begin); }
   std::size_t getBufferAddr() const { return reinterpret_cast<std::size_t>(m_begin); }
   void setAlignedBuffer(std::uint8_t* buf)
   {

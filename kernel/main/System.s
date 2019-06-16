@@ -3,7 +3,7 @@ halt:
   cli
   hlt
 
-; param: PageDirectory*
+; param: uint8_t* pageDirectory
 ; ret: none
 global enablePaging
 enablePaging:

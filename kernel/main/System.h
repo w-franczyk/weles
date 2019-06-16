@@ -1,13 +1,11 @@
 #pragma once
 
-#include "PageDirectory.h"
-
 namespace System
 {
 
 extern "C"
 {
-  void enablePaging(const PageDirectory* pageDirectory);
+  void enablePaging(const std::uint8_t* pageDirectory);
   void halt();
 }
 
