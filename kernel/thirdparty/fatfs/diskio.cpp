@@ -17,6 +17,7 @@
 
 // the os libs
 #include <io/Ata.h>
+#include <main/Res.h>
 
 /*-----------------------------------------------------------------------*/
 /* Get Drive Status                                                      */
@@ -26,7 +27,7 @@ DSTATUS disk_status (
 	BYTE pdrv		/* Physical drive nmuber to identify the drive */
 )
 {
-  if (Ata::instance().isInitialized())
+  if (Res::getAta().isInitialized())
     return 0;
 
   return STA_NOINIT;
@@ -42,7 +43,7 @@ DSTATUS disk_initialize (
 	BYTE pdrv				/* Physical drive nmuber to identify the drive */
 )
 {
-  switch (Ata::instance().init())
+  switch (Res::getAta().init())
   {
   case Ata::InitStatus::NoDrivesDetected:
   case Ata::InitStatus::NoPrimaryMaster:
@@ -69,7 +70,7 @@ DRESULT disk_read (
 	UINT count		/* Number of sectors to read */
 )
 {
-  switch (Ata::instance().read(sector, count, buff))
+  switch (Res::getAta().read(sector, count, buff))
   {
   case Ata::Result::Ok:
     return RES_OK;

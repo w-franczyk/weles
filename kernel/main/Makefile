@@ -1,7 +1,7 @@
 include ../../Makefile.inc
 
 KERNEL_BINARY := $(BIN_DIR)/kernel.bin
-LIBS += -lIo
+LIBS += -lIo -lFatfs
 
 build: $(KERNEL_BINARY)
 
