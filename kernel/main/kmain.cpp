@@ -95,7 +95,7 @@ int kmain()
   Res::setKeyboard(ps2Keyboard);
 
   init(vga, interrupts);
-  printf("hahahaha!! %d\n", 1234);
+  printf("hahahaha!! %d\n", 123456789);
   while (Res::run)
   {
   }
