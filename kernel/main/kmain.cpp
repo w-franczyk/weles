@@ -14,7 +14,10 @@ Memory memory;
 Ata ata;
 bool init(Vga& vga, Interrupts& interrupts)
 {
-  vga.print("I AM THE KERNEL\n");
+  printf("\nI AM THE KERNEL\n\n");
+  printf("====================\n");
+  printf("= Welcome to Weles =\n");
+  printf("====================\n");
   vga.print("VGA Initialized\n");
   vga.print("Initializing ATA controller... ");
   Ata& ata = Res::getAta();
