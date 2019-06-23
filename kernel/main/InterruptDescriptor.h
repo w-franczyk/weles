@@ -1,6 +1,6 @@
 #pragma once
 
-#include <libk/cstdlib>
+#include <cstdlib>
 #include <main/Gdt.h>
 #include <main/InterruptFrame.h>
 

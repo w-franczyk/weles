@@ -8,7 +8,7 @@
 
 void Interrupts::init()
 {
-  initPic();
+  m_pic.init();
   initIdt();
   unmaskHandledIrqs();
 }
@@ -124,99 +124,96 @@ void Interrupts::isrException10CoprocessorError(InterruptFrame*)
 void Interrupts::isrIrq0Timer(InterruptFrame*)
 {
   Res::getVga().print("WARNING: Unhandled IRQ0\n");
-  outb(Pic1PortCmd, PicCmdAck);
+  outb(Pic::Pic1PortCmd, Pic::PicCmdAck);
 }
 
 void Interrupts::isrIrq1Keyboard(InterruptFrame*)
 {
-  Res::getVga().print("Got IRQ keyboard\n");
-  constexpr std::uint8_t keyboardPort = 0x60;
-  inb(keyboardPort);
-  outb(Pic1PortCmd, PicCmdAck);
+  Res::getKeyboard().processEvent();
 }
 
 void Interrupts::isrIrq2(InterruptFrame*)
 {
   Res::getVga().print("WARNING: Unhandled IRQ2\n");
-  outb(Pic1PortCmd, PicCmdAck);
+  outb(Pic::Pic1PortCmd, Pic::PicCmdAck);
 }
 
 void Interrupts::isrIrq3Com2(InterruptFrame*)
 {
   Res::getVga().print("WARNING: Unhandled IRQ3\n");
-  outb(Pic1PortCmd, PicCmdAck);
+  outb(Pic::Pic1PortCmd, Pic::PicCmdAck);
 }
 
 void Interrupts::isrIrq4Com1(InterruptFrame*)
 {
   Res::getVga().print("WARNING: Unhandled IRQ4\n");
-  outb(Pic1PortCmd, PicCmdAck);
+  outb(Pic::Pic1PortCmd, Pic::PicCmdAck);
 }
 
 void Interrupts::isrIrq5Lpt2(InterruptFrame*)
 {
   Res::getVga().print("WARNING: Unhandled IRQ5\n");
-  outb(Pic1PortCmd, PicCmdAck);
+  outb(Pic::Pic1PortCmd, Pic::PicCmdAck);
 }
 
 void Interrupts::isrIrq6Floppy(InterruptFrame*)
 {
   Res::getVga().print("WARNING: Unhandled IRQ6\n");
-  outb(Pic1PortCmd, PicCmdAck);
+  outb(Pic::Pic1PortCmd, Pic::PicCmdAck);
 }
 
 void Interrupts::isrIrq7Lpt1(InterruptFrame*)
 {
   Res::getVga().print("WARNING: Unhandled IRQ7\n");
-  outb(Pic1PortCmd, PicCmdAck);
+  outb(Pic::Pic1PortCmd, Pic::PicCmdAck);
 }
 
 void Interrupts::isrIrq8Cmos(InterruptFrame*)
 {
   Res::getVga().print("WARNING: Unhandled IRQ8\n");
-  outb(Pic2PortCmd, PicCmdAck);
+  outb(Pic::Pic2PortCmd, Pic::PicCmdAck);
 }
 
 void Interrupts::isrIrq9(InterruptFrame*)
 {
   Res::getVga().print("WARNING: Unhandled IRQ9\n");
-  outb(Pic2PortCmd, PicCmdAck);
+  outb(Pic::Pic2PortCmd, Pic::PicCmdAck);
 }
 
 void Interrupts::isrIrq10(InterruptFrame*)
 {
   Res::getVga().print("WARNING: Unhandled IRQ10\n");
-  outb(Pic2PortCmd, PicCmdAck);
+  outb(Pic::Pic2PortCmd, Pic::PicCmdAck);
 }
 
 void Interrupts::isrIrq11(InterruptFrame*)
 {
   Res::getVga().print("WARNING: Unhandled IRQ11\n");
-  outb(Pic2PortCmd, PicCmdAck);
+  outb(Pic::Pic2PortCmd, Pic::PicCmdAck);
 }
 
 void Interrupts::isrIrq12Ps2Mouse(InterruptFrame*)
 {
   Res::getVga().print("WARNING: Unhandled IRQ12\n");
-  outb(Pic2PortCmd, PicCmdAck);
+  outb(Pic::Pic2PortCmd, Pic::PicCmdAck);
 }
 
 void Interrupts::isrIrq13Coprocessor(InterruptFrame*)
 {
   Res::getVga().print("WARNING: Unhandled IRQ13\n");
-  outb(Pic2PortCmd, PicCmdAck);
+  outb(Pic::Pic2PortCmd, Pic::PicCmdAck);
 }
 
 void Interrupts::isrIrq14Ide0(InterruptFrame*)
 {
   Res::getVga().print("WARNING: Unhandled IRQ14\n");
-  outb(Pic2PortCmd, PicCmdAck);
+  outb(Pic::Pic2PortCmd, Pic::PicCmdAck);
 }
 
 void Interrupts::isrIrq15Ide1(InterruptFrame*)
 {
   Res::getVga().print("WARNING: Unhandled IRQ15\n");
-  outb(Pic2PortCmd, PicCmdAck);
+  outb(Pic::Pic2PortCmd, Pic::PicCmdAck);
 }
 
 void Interrupts::initIdt()
@@ -522,37 +519,10 @@ void Interrupts::initIdt()
   __asm__("lidt %0" :: "m"(m_idtPtr));
 }
 
-void Interrupts::initPic()
-{
-  outb(Pic1PortCmd, PicCmdInit);
-  outb(Pic2PortCmd, PicCmdInit);
-
-  // remap IRQ0-7 to 0x20-0x27 in the interrupt vector table
-  outb(Pic1PortData, 0x20);
-  
-  // and do the same with IRQ8-15
-  outb(Pic2PortData, 0x28);
-  
-  /* outb(Pic1PortData, 0x0); */
-  /* outb(Pic2PortData, 0x0); */
-
-  // PIC2 via PIC1??? need to find the cause of it
-  outb(Pic1PortData, 0x04);
-  outb(Pic2PortData, 0x02);
-  
-  // enable 8086/88 mode
-  outb(Pic1PortData, 0x01);
-  outb(Pic2PortData, 0x01);
-
-  // mask interrupts
-  outb(Pic1PortData, 0xff);
-  outb(Pic2PortData, 0xff);
-}
-
 void Interrupts::unmaskHandledIrqs()
 {
   constexpr auto keyboardBit = 0b00000010;
-  outb(Pic1PortData, 0xff ^ keyboardBit);
+  outb(Pic::Pic1PortData, 0xff ^ keyboardBit);
   
   __asm__("sti"); // enable irqs
 }

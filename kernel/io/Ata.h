@@ -1,6 +1,6 @@
 #pragma once
 
-#include <libk/cstdlib>
+#include <cstdlib>
 
 class Ata
 {
@@ -74,8 +74,6 @@ public:
   Result read(unsigned int sector, std::uint8_t count, std::uint8_t* outBuff);
 
   DriverIdentifier& test() { return m_driverIdentifier; }
-
-  static Ata& instance();
 
 private:
   DriverIdentifier m_driverIdentifier;

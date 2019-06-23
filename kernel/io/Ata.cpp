@@ -2,15 +2,7 @@
 
 #include <io/PortIo.h>
 #include <io/Vga.h>
-#include <libk/cstdlib>
-
-// TODO: get rid of global and make it singletone once heap allocation done
-Ata globalInstance;
-
-Ata& Ata::instance()
-{
-  return globalInstance;
-}
+#include <cstdlib>
 
 Ata::InitStatus Ata::init()
 {

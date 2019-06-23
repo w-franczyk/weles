@@ -1,3 +1,3 @@
-TARGETLIB_NAME := Io
+TARGETLIB_NAME := Libk
 
 include ../MakefileKern.inc

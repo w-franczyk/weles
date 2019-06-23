@@ -1,7 +1,11 @@
 #pragma once
 
-#include <libk/cstdlib>
-#include <main/InterruptFrame.h>
+#include "InterruptFrame.h"
+
+#include <io/Pic.h>
+#include <io/Ps2Keyboard.h>
+
+#include <cstdlib>
 
 class Interrupts
 {
@@ -265,20 +269,6 @@ class Interrupts
     IntFf
   };
 
-  enum PicPort : std::uint16_t
-  {
-    Pic1PortCmd = 0x20,
-    Pic1PortData = 0x21,
-    Pic2PortCmd = 0xa0,
-    Pic2PortData = 0xa1
-  };
-
-  enum PicCmd : std::uint8_t
-  {
-    PicCmdInit = 0x11,
-    PicCmdAck = 0x20
-  };
-
 #pragma pack(push, 1)
   struct IdtPtr
   {
@@ -288,7 +278,7 @@ class Interrupts
 #pragma pack(pop)
 
 public:
-  Interrupts() = default;
+  Interrupts(Ps2Keyboard& ps2Keyboard) : m_ps2Keyboard(ps2Keyboard) {}
   void init();
 
   __attribute__((interrupt)) static void
@@ -400,4 +390,7 @@ private:
 
   std::uint64_t m_idt[256];
   IdtPtr m_idtPtr;
+  Pic m_pic;
+  // a placeholder, keyboard shouldn't be get via Res!
+  Ps2Keyboard& m_ps2Keyboard;
 };

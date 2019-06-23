@@ -1,16 +1,19 @@
 #include <io/Ata.h>
+#include <io/Ps2Keyboard.h>
 #include <io/Vga.h>
 #include <main/Interrupts.h>
 #include <main/Memory.h>
+#include <main/ProcessController.h>
 #include <main/Res.h>
+#include <main/StdinController.h>
 #include <thirdparty/fatfs/ff.h>
 
-Interrupts interrupts;
+#include <stdio.h>
+
 Memory memory;
 Ata ata;
-bool init()
+bool init(Vga& vga, Interrupts& interrupts)
 {
-  Vga& vga = Res::getVga();
   vga.print("I AM THE KERNEL\n");
   vga.print("VGA Initialized\n");
   vga.print("Initializing ATA controller... ");
@@ -79,11 +82,20 @@ bool init()
 int kmain()
 {
   Vga vga;
-
-  Res::setAta(ata);
   Res::setVga(vga);
+  Res::setAta(ata);
 
-  init();
+  ProcessController processController(vga);
+  StdinController stdinController(processController);
+  Ps2Keyboard ps2Keyboard(stdinController);
+  Interrupts interrupts(ps2Keyboard);
+  
+  // TODO: probably it shouldn't be here!!
+  // Users can use their own references to it, not the global one!
+  Res::setKeyboard(ps2Keyboard);
+
+  init(vga, interrupts);
+  printf("hahahaha!! %d\n", 1234);
   while (Res::run)
   {
   }

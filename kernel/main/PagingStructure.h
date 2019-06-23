@@ -1,6 +1,6 @@
 #pragma once
 
-#include <libk/cstdlib>
+#include <cstdlib>
 
 template <class EntryType>
 class PagingStructure

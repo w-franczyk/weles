@@ -2,7 +2,7 @@
 
 #include "PagingStructure.h"
 
-#include <libk/cstdlib>
+#include <cstdlib>
 
 #pragma pack(push, 1)
 class PageTableDescriptor

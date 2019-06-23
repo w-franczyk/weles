@@ -3,7 +3,7 @@
 #include "PageDirectory.h"
 #include "PageTable.h"
 
-#include <libk/cstdlib>
+#include <cstdlib>
 
 class Memory
 {

@@ -24,7 +24,7 @@
 /*-----------------------------------------------------------------------*/
 
 DSTATUS disk_status (
-	BYTE pdrv		/* Physical drive nmuber to identify the drive */
+	BYTE /*pdrv*/		/* Physical drive nmuber to identify the drive */
 )
 {
   if (Res::getAta().isInitialized())
@@ -40,7 +40,7 @@ DSTATUS disk_status (
 /*-----------------------------------------------------------------------*/
 
 DSTATUS disk_initialize (
-	BYTE pdrv				/* Physical drive nmuber to identify the drive */
+	BYTE /*pdrv*/				/* Physical drive nmuber to identify the drive */
 )
 {
   switch (Res::getAta().init())
@@ -64,7 +64,7 @@ DSTATUS disk_initialize (
 /*-----------------------------------------------------------------------*/
 
 DRESULT disk_read (
-	BYTE pdrv,		/* Physical drive nmuber to identify the drive */
+	BYTE /*pdrv*/,		/* Physical drive nmuber to identify the drive */
 	BYTE *buff,		/* Data buffer to store read data */
 	DWORD sector,	/* Start sector in LBA */
 	UINT count		/* Number of sectors to read */
@@ -93,10 +93,10 @@ DRESULT disk_read (
 #if FF_FS_READONLY == 0
 
 DRESULT disk_write (
-	BYTE pdrv,			/* Physical drive nmuber to identify the drive */
-	const BYTE *buff,	/* Data to be written */
-	DWORD sector,		/* Start sector in LBA */
-	UINT count			/* Number of sectors to write */
+	BYTE /*pdrv*/,			/* Physical drive nmuber to identify the drive */
+	const BYTE* /*buff*/,	/* Data to be written */
+	DWORD /*sector*/,		/* Start sector in LBA */
+	UINT /*count*/			/* Number of sectors to write */
 )
 {
 	/* DRESULT res; */
@@ -142,7 +142,7 @@ DRESULT disk_write (
 /*-----------------------------------------------------------------------*/
 
 DRESULT disk_ioctl (
-	BYTE pdrv,		/* Physical drive nmuber (0..) */
+	BYTE /*pdrv*/,		/* Physical drive nmuber (0..) */
 	BYTE cmd,		/* Control code */
 	void *buff		/* Buffer to send/receive control data */
 )
@@ -152,10 +152,13 @@ DRESULT disk_ioctl (
   {
     case GET_SECTOR_COUNT:
       *((DWORD*)buff) = 79872;
+      break;
     case GET_SECTOR_SIZE:
       *((WORD*)buff) = 512;
+      break;
     case GET_BLOCK_SIZE:
       *((DWORD*)buff) = 1;
+      break;
   }
 
   return RES_OK;
