@@ -7,14 +7,12 @@
 class StdinController
 {
 public:
-  struct Action {};
-
   explicit StdinController(ProcessController& processController) :
     m_processController(processController) {}
 
-  void push(const Action& /*action*/)
+  void push(char c)
   {
-    m_processController.stdin(buffer, 1);
+    m_processController.stdin(&c, 1);
   }
 
 private:

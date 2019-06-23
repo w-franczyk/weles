@@ -9,7 +9,7 @@ class Shell
 public:
   Shell(Vga& vga) : m_vga(vga) {}
 
-  void keyboardEvent(std::uint8_t /*event*/);
+  void keyboardEvent(unsigned char event);
 
 private:
   Vga& m_vga;

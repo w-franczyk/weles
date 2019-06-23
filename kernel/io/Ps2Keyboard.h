@@ -12,7 +12,7 @@ public:
   void processEvent();
 
 private:
-  StdinController::Action scancodeToStdinAction(std::uint8_t scancode);
+  /* StdinController::Action scancodeToStdinAction(std::uint8_t scancode); */
 
   bool m_capsLock = false;
   StdinController& m_stdinController;

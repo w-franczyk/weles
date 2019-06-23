@@ -3,7 +3,7 @@
 extern "C"
 {
   
-void vgaPrint(const char* c)
+void vgaPrint(char c)
 {
   Res::getVga().print(c);
 }

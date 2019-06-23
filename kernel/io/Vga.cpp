@@ -22,6 +22,12 @@ std::uint16_t Vga::getCursorPos() const
   return (m_framePtr - m_frameBuffer) / 2;
 }
 
+void Vga::print(char c)
+{
+  const char data[] = {c, 0};
+  print(data);
+}
+
 void Vga::print(const char* s)
 {
   LineParams params;

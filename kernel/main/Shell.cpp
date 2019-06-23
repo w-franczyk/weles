@@ -1,6 +1,8 @@
 #include "Shell.h"
 
-void Shell::keyboardEvent(std::uint8_t /*event*/)
+#include <stdio.h>
+
+void Shell::keyboardEvent(unsigned char event)
 {
-  m_vga.print("shell: got event\n");
+  printf("Got keyboard: %x\n", event);
 }

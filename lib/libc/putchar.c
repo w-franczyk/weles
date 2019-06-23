@@ -7,7 +7,7 @@
 int putchar(int ic) {
 #if defined(WELES_KERNEL)
     char c = (char) ic;
-    vgaPrint(&c);
+    vgaPrint(c);
 #else
     // TODO: Implement stdio and the write system call.
 #endif

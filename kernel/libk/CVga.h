@@ -1,3 +1,3 @@
 #pragma once
 
-void vgaPrint(const char* c);
+void vgaPrint(char c);

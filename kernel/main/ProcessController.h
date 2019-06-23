@@ -12,7 +12,7 @@ public:
   // not a "special" one
   explicit ProcessController(Vga& vga) : m_shell(Shell(vga)) {}
 
-  void stdin(std::uint8_t* buff, std::size_t /*size*/)
+  void stdin(const char* buff, std::size_t /*size*/)
   {
     m_shell.keyboardEvent(buff[0]);
   }

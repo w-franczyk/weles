@@ -48,6 +48,7 @@ public:
   Vga();
   void initCursorPos();
   std::uint16_t getCursorPos() const;
+  void print(char c);
   void print(const char* s);
   void print(const char* s, Color fgcolor);
   void print(const char* s, Color fgcolor, Color bgcolor);

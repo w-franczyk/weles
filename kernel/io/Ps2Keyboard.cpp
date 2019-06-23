@@ -11,11 +11,6 @@ void Ps2Keyboard::processEvent()
   std::uint8_t scancode = inb(keyboardPort);
   outb(Pic::Pic1PortCmd, Pic::PicCmdAck);
 
-  StdinController::Action action = scancodeToStdinAction(scancode);
-  m_stdinController.push(action);
-}
-
-StdinController::Action Ps2Keyboard::scancodeToStdinAction(std::uint8_t /*event*/)
-{
-  return {};
+  // StdinController::Action action = scancodeToStdinAction(scancode);
+  m_stdinController.push(scancode);
 }
