@@ -52,6 +52,8 @@ class Ata
   };
 
 public:
+  Ata() = default;
+
   enum class InitStatus
   {
     NoDrivesDetected,

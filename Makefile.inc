@@ -13,9 +13,9 @@ OBJ_FILES := $(OBJ_FILES:.c=.o)
 OBJ_FILES := $(addprefix $(BUILD_DIR)/,$(OBJ_FILES))
 
 GCC := i686-elf-gcc
-GCCFLAGS := -ffreestanding -Wall -Wextra -masm=intel -m32 -g
+GCCFLAGS := -ffreestanding -Wall -Wextra -Werror -masm=intel -m32 -g
 GXX := i686-elf-g++
-GXXFLAGS := $(GCCFLAGS) -fno-rtti -fno-exceptions -fno-threadsafe-statics -m32 -g
+GXXFLAGS := $(GCCFLAGS) -fno-rtti -fno-exceptions -fno-threadsafe-statics -m32 -g -Wall -Wextra -Werror 
 LDFLAGS := -ffreestanding -nostdlib -m32
 LIBS := -L$(BIN_LIB_DIR) -lgcc
 

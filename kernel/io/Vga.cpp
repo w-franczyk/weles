@@ -2,6 +2,7 @@
 
 #include <io/PortIo.h>
 
+#include <string.h>
 
 Vga::Vga()
 {
@@ -65,9 +66,8 @@ void Vga::print(const char* s, const LineParams& params)
       break;
     }
 
-    // not needed for now
-    /* if (getCursorPos() > m_lines * m_columns) */
-    /*   addLine(); */
+    if (getCursorPos() > m_lines * m_columns - 1) // cursor pos counted from 0!
+      addLine();
 
     ++s;
   }
@@ -86,9 +86,14 @@ void Vga::poll() const
 
 void Vga::addLine()
 {
-  /* memcpy(m_frameBuffer, */
-  /*        m_frameBuffer + m_columns * 2, */
-  /*        m_frameBuffer + m_columns * m_lines * 2 - m_columns * 2); */
+  std::uint8_t* bufferEnd = m_frameBuffer + m_columns * m_lines * 2;
+  const std::size_t lineSizeBytes = m_columns * 2; // 2 bytes per char
+  memcpy(m_frameBuffer,
+         m_frameBuffer + lineSizeBytes,
+         bufferEnd - m_frameBuffer - lineSizeBytes);
+
+  m_framePtr = bufferEnd - lineSizeBytes;
+  memset(m_framePtr, 0, lineSizeBytes);
 }
 
 std::uint8_t Vga::getParamsValue(const LineParams& params) const
