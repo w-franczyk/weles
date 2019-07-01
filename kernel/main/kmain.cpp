@@ -12,7 +12,7 @@
 
 Memory memory;
 Ata ata;
-bool init(Vga& vga, Interrupts& interrupts)
+bool init(Vga& vga, Interrupts& interrupts, ProcessController& pcontroller)
 {
   printf("\nI AM THE KERNEL\n\n");
   printf("====================\n");
@@ -79,6 +79,8 @@ bool init(Vga& vga, Interrupts& interrupts)
   resStr[0] = res + 0x30;
   vga.print(resStr);
 
+  pcontroller.init();
+
   return true;
 }
 
@@ -97,8 +99,7 @@ int kmain()
   // Users can use their own references to it, not the global one!
   Res::setKeyboard(ps2Keyboard);
 
-  init(vga, interrupts);
-  printf("hahahaha!! %d\n", 123456789);
+  init(vga, interrupts, processController);
   while (Res::run)
   {
   }

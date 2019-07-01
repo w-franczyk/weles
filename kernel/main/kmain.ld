@@ -9,6 +9,8 @@ SECTIONS
     code = .;
     *(.bootstrap)
     *(.text)
+    *(.data)
+    *(.bss)
     *(.rodata)
     . = ALIGN(4096);
   }

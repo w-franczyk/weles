@@ -54,6 +54,7 @@ public:
   void print(const char* s, Color fgcolor, Color bgcolor);
   void print(const char* s, const LineParams& params);
   void poll() const;
+  void retreat();
 
 private:
   void addLine();

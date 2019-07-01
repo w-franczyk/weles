@@ -84,6 +84,14 @@ void Vga::poll() const
   outb(PortVgaData, pos & 0x00FF);
 }
 
+void Vga::retreat()
+{
+  m_framePtr -= 2;
+  *m_framePtr = getParamsValue(LineParams());
+  *(m_framePtr + 1) = 0;
+  poll();
+}
+
 void Vga::addLine()
 {
   std::uint8_t* bufferEnd = m_frameBuffer + m_columns * m_lines * 2;
