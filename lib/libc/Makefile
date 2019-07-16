@@ -2,4 +2,7 @@ TARGETLIB_NAME := Libc
 
 include ../../Makefile.inc
 
-INCLUDE_DIR := -I $(ROOT_DIR)/lib/libc/include
+GCCFLAGS := $(GCCFLAGS) -DPRINTF_DISABLE_SUPPORT_LONG_LONG
+GXXFLAGS := $(GXXFLAGS) -DPRINTF_DISABLE_SUPPORT_LONG_LONG
+
+INCLUDE_DIR := -I $(ROOT_DIR)/lib/libc/include -I $(ROOT_DIR)/lib

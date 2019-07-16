@@ -9,7 +9,7 @@ $(KERNEL_BINARY): $(OBJ_FILES)
 	$(GXX) -T kmain.ld -o $(KERNEL_BINARY) $(LDFLAGS) $(OBJ_FILES) $(LIBS)
 
 vdisk: build
-	$(ROOT_DIR)/util/mount.sh
+	$(ROOT_DIR)/util/mount.sh $(DISK_IMAGE)
 	sudo cp $(KERNEL_BINARY) /mnt/boot/kernel.bin
 	$(ROOT_DIR)/util/umount.sh
 

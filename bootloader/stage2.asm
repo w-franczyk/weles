@@ -40,7 +40,7 @@ start:
   cli ; disable any other interrupts
   xor ax, ax
   mov ds, ax ; set data segment to 0
-  
+ 
   ; load GDT
   PRINT msgLoadGdt
   lgdt [gdt_descriptor]

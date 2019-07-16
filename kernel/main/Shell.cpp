@@ -7,11 +7,11 @@
 
 void Shell::init()
 {
-  printf("Skorupa Welosa v0.1\n");
+  printf("Skorupa Welesa v0.2\n");
   showPrompt();
 }
 
-void Shell::keyboardEvent(unsigned char event)
+auto Shell::keyboardEvent(unsigned char event) -> EventRes
 {
   if (event > Key::SpecialKeysStart)
   {
@@ -27,13 +27,25 @@ void Shell::keyboardEvent(unsigned char event)
 
     if (event == '\n')
     {
-      execCmd();
+      if (m_cmdBufferIdx > 0)
+        return EventRes::ImSoProud_LaunchTheMissile;
+      else
+        showPrompt();
     }
     else
     {
       addToBuffer(event);
     }
   }
+
+  return EventRes::Meh;
+}
+
+void Shell::cleanup()
+{
+  memset(m_cmdBuffer, 0, sizeof(m_cmdBuffer));
+  m_cmdBufferIdx = 0;
+  showPrompt();
 }
 
 void Shell::addToBuffer(char c)
@@ -46,17 +58,10 @@ void Shell::addToBuffer(char c)
 
 void Shell::bufferRetreat()
 {
-  m_cmdBuffer[m_cmdBufferIdx] = 0;
   if (m_cmdBufferIdx > 0)
     --m_cmdBufferIdx;
-}
-
-void Shell::execCmd()
-{
-  printf("System: Executing command: %s\n", m_cmdBuffer);
-  memset(m_cmdBuffer, 0, sizeof(m_cmdBuffer));
-  m_cmdBufferIdx = 0;
-  showPrompt();
+  
+  m_cmdBuffer[m_cmdBufferIdx] = 0;
 }
 
 void Shell::showPrompt()

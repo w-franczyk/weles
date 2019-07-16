@@ -12,7 +12,7 @@
 
 Memory memory;
 Ata ata;
-bool init(Vga& vga, Interrupts& interrupts, ProcessController& pcontroller)
+bool init(Vga& vga, Interrupts& interrupts, ProcessController& pcontroller, FATFS& filesystem)
 {
   printf("\nI AM THE KERNEL\n\n");
   printf("====================\n");
@@ -47,15 +47,15 @@ bool init(Vga& vga, Interrupts& interrupts, ProcessController& pcontroller)
   di.serialNumber[19] = 0;
   di.firmwareRevision[7] = 0;
   di.modelNumber[39] = 0;
-  vga.print("ATA Serial Number: ");
-  vga.print(di.serialNumber);
-  vga.print("\n");
-  vga.print("ATA Firmware: ");
-  vga.print(di.firmwareRevision);
-  vga.print("\n");
-  vga.print("ATA Model: ");
-  vga.print(di.modelNumber);
-  vga.print("\n");
+  /* vga.print("ATA Serial Number: "); */
+  /* vga.print(di.serialNumber); */
+  /* vga.print("\n"); */
+  /* vga.print("ATA Firmware: "); */
+  /* vga.print(di.firmwareRevision); */
+  /* vga.print("\n"); */
+  /* vga.print("ATA Model: "); */
+  /* vga.print(di.modelNumber); */
+  /* vga.print("\n"); */
 
   std::uint8_t buff[512];
   if (ata.read(2048, 1, buff) == Ata::Result::Ok)
@@ -63,8 +63,7 @@ bool init(Vga& vga, Interrupts& interrupts, ProcessController& pcontroller)
   else
     vga.print("ATA test: Error :(\n");
 
-  FATFS fs;
-  f_mount(&fs, "", 0);
+  f_mount(&filesystem, "", 0);
 
   FIL f;
   int res = f_open(&f, "/WRTEST.TXT", FA_READ);
@@ -98,8 +97,10 @@ int kmain()
   // TODO: probably it shouldn't be here!!
   // Users can use their own references to it, not the global one!
   Res::setKeyboard(ps2Keyboard);
+  
+  FATFS filesystem;
 
-  init(vga, interrupts, processController);
+  init(vga, interrupts, processController, filesystem);
   while (Res::run)
   {
   }

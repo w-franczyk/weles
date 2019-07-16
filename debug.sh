@@ -1,1 +1,1 @@
-qemu-system-i386 -s -S disk.img
+qemu-system-i386 -m 512 -s -S disk.img

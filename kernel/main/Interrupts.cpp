@@ -18,6 +18,19 @@ void Interrupts::isrDefault(InterruptFrame*)
   Res::getVga().print("WARNING: Unhandled interrupt\n");
 }
 
+void Interrupts::isrSyscall(InterruptFrame*)
+{
+  register unsigned syscall asm("eax");
+  register char value asm("bh");
+  switch (syscall)
+  {
+  case 0xffffffff:
+    Res::getVga().print(value);
+    break;
+  default:
+    Res::getVga().print("WARNING: Unhandled syscall\n");
+  }
+}
 
 void Interrupts::isrException00Divide(InterruptFrame*)
 {
@@ -384,7 +397,7 @@ void Interrupts::initIdt()
   m_idt[Int7d] = InterruptDescriptor(Interrupts::isrDefault).serialize();
   m_idt[Int7e] = InterruptDescriptor(Interrupts::isrDefault).serialize();
   m_idt[Int7f] = InterruptDescriptor(Interrupts::isrDefault).serialize();
-  m_idt[Int80] = InterruptDescriptor(Interrupts::isrDefault).serialize();
+  m_idt[Int80] = InterruptDescriptor(Interrupts::isrSyscall).serialize();
   m_idt[Int81] = InterruptDescriptor(Interrupts::isrDefault).serialize();
   m_idt[Int82] = InterruptDescriptor(Interrupts::isrDefault).serialize();
   m_idt[Int83] = InterruptDescriptor(Interrupts::isrDefault).serialize();

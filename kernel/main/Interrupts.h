@@ -283,6 +283,9 @@ public:
 
   __attribute__((interrupt)) static void
   isrDefault(InterruptFrame*);
+ 
+  __attribute__((interrupt)) static void
+  isrSyscall(InterruptFrame*);
   
   __attribute__((interrupt)) static void
   isrException00Divide(InterruptFrame*);

@@ -4,6 +4,8 @@
 
 #include <io/Vga.h>
 
+#include <thirdparty/fatfs/ff.h>
+
 class ProcessController
 {
 public:
@@ -17,11 +19,9 @@ public:
     m_shell.init();
   }
 
-  void stdin(const char* buff, std::size_t /*size*/)
-  {
-    m_shell.keyboardEvent(buff[0]);
-  }
+  void stdin(const char* buff, std::size_t /*size*/);
 
 private:
   Shell m_shell;
+  void* m_subProcessAddr = reinterpret_cast<void*>(0x100000);
 };

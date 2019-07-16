@@ -2,8 +2,9 @@
 SHELL := /bin/bash
 ROOT_DIR := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 BIN_DIR := $(ROOT_DIR)/bin
-BIN_LIB_DIR := $(ROOT_DIR)/bin/lib
+BIN_LIB_DIR := $(BIN_DIR)/lib
 BUILD_DIR := ./build
+DISK_IMAGE := $(ROOT_DIR)/disk.img
 
 H_FILES := $(wildcard *.h)
 SRC_FILES := $(wildcard *.cpp) $(wildcard *.s) $(wildcard *.c)
