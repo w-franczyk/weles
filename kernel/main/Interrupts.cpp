@@ -6,8 +6,15 @@
 #include <main/Res.h>
 #include <main/System.h>
 
-void Interrupts::init()
+Ps2Keyboard* Interrupts::m_ps2Keyboard = nullptr;
+StdinController* Interrupts::m_stdinController = nullptr;
+
+void Interrupts::init(Ps2Keyboard& keyboard,
+                      StdinController& stdinController)
 {
+  m_ps2Keyboard = &keyboard;
+  m_stdinController = &stdinController;
+
   m_pic.init();
   initIdt();
   unmaskHandledIrqs();
@@ -20,13 +27,32 @@ void Interrupts::isrDefault(InterruptFrame*)
 
 void Interrupts::isrSyscall(InterruptFrame*)
 {
-  register unsigned syscall asm("eax");
-  register char value asm("bh");
+  enum SysCall : unsigned int
+  { 
+    CallPutchar = 0xffffffff,
+    CallFileOpen = 0xfffffffe,
+    CallFileClose = 0xfffffffd,
+    CallFileRead = 0xfffffffc,
+    CallFileWrite = 0xfffffffb,
+    CallStdin = 0xfffffffa,
+    CallStdout = 0xfffffff9
+  };
+
+  register SysCall syscall asm("eax");
   switch (syscall)
   {
-  case 0xffffffff:
+  case CallPutchar:
+  {
+    register char value asm("bh");
     Res::getVga().print(value);
     break;
+  }
+  case CallStdin:
+  {
+    register char* target asm("ebx");
+    m_stdinController->getLine(target);
+    break;
+  }
   default:
     Res::getVga().print("WARNING: Unhandled syscall\n");
   }
@@ -142,7 +168,8 @@ void Interrupts::isrIrq0Timer(InterruptFrame*)
 
 void Interrupts::isrIrq1Keyboard(InterruptFrame*)
 {
-  Res::getKeyboard().processEvent();
+  Res::getVga().print("keykeykey\n");
+  m_ps2Keyboard->processEvent();
 }
 
 void Interrupts::isrIrq2(InterruptFrame*)

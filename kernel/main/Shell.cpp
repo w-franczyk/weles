@@ -45,7 +45,6 @@ void Shell::cleanup()
 {
   memset(m_cmdBuffer, 0, sizeof(m_cmdBuffer));
   m_cmdBufferIdx = 0;
-  showPrompt();
 }
 
 void Shell::addToBuffer(char c)

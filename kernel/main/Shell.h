@@ -22,11 +22,11 @@ public:
   EventRes keyboardEvent(unsigned char event);
   void cleanup();
   const char* getCmd() const { return m_cmdBuffer; }
+  void showPrompt();
 
 private:
   void addToBuffer(char c);
   void bufferRetreat();
-  void showPrompt();
 
   char m_cmdBuffer[255];
   std::size_t m_cmdBufferIdx = 0;

@@ -12,7 +12,12 @@
 
 Memory memory;
 Ata ata;
-bool init(Vga& vga, Interrupts& interrupts, ProcessController& pcontroller, FATFS& filesystem)
+bool init(Vga& vga,
+          Interrupts& interrupts,
+          ProcessController& pcontroller,
+          FATFS& filesystem,
+          Ps2Keyboard& keyboard,
+          StdinController& stdinController)
 {
   printf("\nI AM THE KERNEL\n\n");
   printf("====================\n");
@@ -39,7 +44,7 @@ bool init(Vga& vga, Interrupts& interrupts, ProcessController& pcontroller, FATF
     vga.print("Done\n");
   }
 
-  interrupts.init();
+  interrupts.init(keyboard, stdinController);
 
 //  memory.init();
 
@@ -92,17 +97,21 @@ int kmain()
   ProcessController processController(vga);
   StdinController stdinController(processController);
   Ps2Keyboard ps2Keyboard(stdinController);
-  Interrupts interrupts(ps2Keyboard);
-  
-  // TODO: probably it shouldn't be here!!
-  // Users can use their own references to it, not the global one!
-  Res::setKeyboard(ps2Keyboard);
+  Interrupts interrupts; 
   
   FATFS filesystem;
 
-  init(vga, interrupts, processController, filesystem);
+  init(vga,
+       interrupts,
+       processController,
+       filesystem,
+       ps2Keyboard,
+       stdinController);
+
   while (Res::run)
   {
+    if (processController.isSubprocessLoaded())
+      processController.invokeSubprocess();
   }
 
   return 0;

@@ -10,12 +10,12 @@ public:
   explicit StdinController(ProcessController& processController) :
     m_processController(processController) {}
 
-  void push(char c)
-  {
-    m_processController.stdin(&c, 1);
-  }
+  void getLine(char* target);
+  void push(char c);
 
 private:
   ProcessController& m_processController;
-  std::uint8_t buffer[256];
+  char m_buffer[256] = {0};
+  std::size_t m_bufferPos = 0;
+  bool m_waitForWholeLine = false;
 };

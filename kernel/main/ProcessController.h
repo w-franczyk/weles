@@ -19,9 +19,14 @@ public:
     m_shell.init();
   }
 
+  bool isSubprocessLoaded() const { return m_subprocessLoaded; }
+  void invokeSubprocess();
   void stdin(const char* buff, std::size_t /*size*/);
 
 private:
+  bool loadCmd(const char* path);
+
   Shell m_shell;
-  void* m_subProcessAddr = reinterpret_cast<void*>(0x100000);
+  void* m_subprocessAddr = reinterpret_cast<void*>(0x100000);
+  bool m_subprocessLoaded = false;
 };

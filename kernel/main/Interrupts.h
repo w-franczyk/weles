@@ -1,6 +1,7 @@
 #pragma once
 
 #include "InterruptFrame.h"
+#include "StdinController.h"
 
 #include <io/Pic.h>
 #include <io/Ps2Keyboard.h>
@@ -278,8 +279,10 @@ class Interrupts
 #pragma pack(pop)
 
 public:
-  Interrupts(Ps2Keyboard& ps2Keyboard) : m_ps2Keyboard(ps2Keyboard) {}
-  void init();
+  Interrupts() {}
+
+  void init(Ps2Keyboard& keyboard,
+            StdinController& stdinController);
 
   __attribute__((interrupt)) static void
   isrDefault(InterruptFrame*);
@@ -394,6 +397,7 @@ private:
   std::uint64_t m_idt[256];
   IdtPtr m_idtPtr;
   Pic m_pic;
-  // a placeholder, keyboard shouldn't be get via Res!
-  Ps2Keyboard& m_ps2Keyboard;
+  
+  static Ps2Keyboard* m_ps2Keyboard;
+  static StdinController* m_stdinController;
 };
