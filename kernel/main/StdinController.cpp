@@ -7,11 +7,18 @@ void StdinController::getLine(char* target)
 {
   m_waitForWholeLine = true;
 
+  /* int c = 1; */
   // interrupts handling (push func) should set it to false
   // once we get the whole line
-  while (m_waitForWholeLine)
-  {
-  }
+  /* while (m_waitForWholeLine) */
+  /* { */
+  /*   int a = 2; */
+  /*   int b = a; */
+  /*   a = c; */
+  /*   b = c; */
+  /*   c = 14; */
+  /*   c = b; */
+  /* } */
 
   memcpy(target, m_buffer, strlen(m_buffer));
   memset(m_buffer, 0, m_bufferPos);
@@ -22,7 +29,6 @@ void StdinController::push(char c)
 {
   if (m_waitForWholeLine)
   {
-    printf("DBG!");
     if (m_bufferPos < sizeof(m_buffer))
     {
       if (c == '\n')

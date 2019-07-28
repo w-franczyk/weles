@@ -3,6 +3,7 @@
   - https://arjunsreedharan.org/ - kilka pomocnych przykładów
   - https://littleosbook.github.io/
   - http://skelix.net/skelixos/tutorial03_en.html
+  - http://kodu.ut.ee/~manuel/talks/osworkshop.pdf - fajna prezentacja zbierająca w kupe podstawy
 
 - POSIX1.2017 standard (Single UNIX specification v4 2018), IEEE Std 1003.1, 2017
   - https://publications.opengroup.org/t101
@@ -112,7 +113,7 @@ v/zero of=disk.img bs=1M count=100
   - IRQ i przerwania systemowe nakładają się na siebie
   - są dwa Programmable Interrupt Controller (PIC) 8259A (https://en.wikipedia.org/wiki/Intel_8259). PIC1 jest od IRQ0-7, PIC2 od IRQ8-15.
     trzeba przeprogramować oba żeby nie nakładały się numery przerwań z systemowymi (http://skelix.net/skelixos/tutorial04_en.html, https://arjunsreedharan.org/post/99370248137/kernels-201-lets-write-a-kernel-with-keyboard)
-  - to jest układ wchodzący w skłąd standardu x86 stąd wszystko (jak np port) jest zdefiniowane _prawdopodobnie_ przez intela, nie przez standard płyty np
+  - to jest układ wchodzący w skłąd standardu x86 stąd wszystko (jak np port) jest zdefiniowane _prawdopodobnie_ przez intela, nie przez standard płyty np (przyp. Intel System Programming Guide, rozdział 10 APIC)
   - zastąpiony przez APIC, jednak testos obsłuje tylko PIC
   - https://wiki.osdev.org/8259_PIC, https://pdos.csail.mit.edu/6.828/2005/readings/hardware/8259A.pdf
   - https://wiki.osdev.org/Interrupt_Service_Routines
@@ -126,5 +127,11 @@ v/zero of=disk.img bs=1M count=100
   - https://wiki.osdev.org/Paging
   - http://skelix.net/skelixos/tutorial08_en.html !!!
   - inny elegancki tutorial jak zainicjalizować stronicowanie: https://wiki.osdev.org/Setting_Up_Paging
+
+
+- zarządzanie taskami
+  - Intel System Programming Guide, rozdział 7 Task Management
+  - Linux nie używa hardware task management, ponieważ software jest niewiele mniej wydajny a przenośny
+  - http://www.osdever.net/tutorials/view/software-task-switching
   
 

@@ -168,7 +168,6 @@ void Interrupts::isrIrq0Timer(InterruptFrame*)
 
 void Interrupts::isrIrq1Keyboard(InterruptFrame*)
 {
-  Res::getVga().print("keykeykey\n");
   m_ps2Keyboard->processEvent();
 }
 
