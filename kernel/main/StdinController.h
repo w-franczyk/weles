@@ -15,7 +15,7 @@ public:
 
 private:
   ProcessController& m_processController;
-  char m_buffer[256] = {0};
-  std::size_t m_bufferPos = 0;
-  bool m_waitForWholeLine = false;
+  bool m_bufferWholeLine = false;
+  char* m_targetBuf = nullptr;
+  std::size_t m_targetBufPos = 0;
 };

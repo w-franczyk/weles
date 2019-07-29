@@ -3,8 +3,8 @@ ENTRY(_start)
 SECTIONS
 {
   . = 1K;
-  /* . = 0x100000; */
-  .text 0x100400 : AT(0x100400) {
+  .sig 0x100400 : AT(0x100400) {}
+  .text 0x100600 : AT(0x100600) {
     code = .;
     *(.crt0)
     *(.text)

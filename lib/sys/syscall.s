@@ -7,6 +7,9 @@
 %define SYS_STDIN 0xfffffffa
 %define SYS_STDOUT 0xfffffff9
 
+; signals
+extern sigIoReadReady
+
 ; param: char
 ; ret: void
 global sysPutchar
@@ -59,6 +62,12 @@ sysStdin:
   xor ebx, ebx
   mov ebx, [DESTINATION]
   int 0x80
+
+  .loop:
+  cmp BYTE [sigIoReadReady], 1
+  jne .loop
+
+  mov BYTE [sigIoReadReady], 0
 
   popa
   pop ebp

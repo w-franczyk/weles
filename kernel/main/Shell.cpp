@@ -13,32 +13,11 @@ void Shell::init()
 
 auto Shell::keyboardEvent(unsigned char event) -> EventRes
 {
-  if (event > Key::SpecialKeysStart)
-  {
-    if (event == Key::Backspace)
-    {
-      m_vga.retreat();
-      bufferRetreat();
-    }
-  }
-  else
-  {
-    printf("%c", event);
+  handleVga(event);
+  if (m_mode == Mode::PrintOnly)
+    return EventRes::Meh;
 
-    if (event == '\n')
-    {
-      if (m_cmdBufferIdx > 0)
-        return EventRes::ImSoProud_LaunchTheMissile;
-      else
-        showPrompt();
-    }
-    else
-    {
-      addToBuffer(event);
-    }
-  }
-
-  return EventRes::Meh;
+  return handleActions(event);
 }
 
 void Shell::cleanup()
@@ -61,6 +40,48 @@ void Shell::bufferRetreat()
     --m_cmdBufferIdx;
   
   m_cmdBuffer[m_cmdBufferIdx] = 0;
+}
+
+auto Shell::handleActions(unsigned char event) -> EventRes
+{
+  if (event > Key::SpecialKeysStart)
+  {
+    if (event == Key::Backspace)
+    {
+      bufferRetreat();
+    }
+  }
+  else
+  {
+    if (event == '\n')
+    {
+      if (m_cmdBufferIdx > 0)
+        return EventRes::ImSoProud_LaunchTheMissile;
+      else
+        showPrompt();
+    }
+    else
+    {
+      addToBuffer(event);
+    }
+  }
+
+  return EventRes::Meh;
+}
+
+void Shell::handleVga(unsigned char event)
+{
+  if (event > Key::SpecialKeysStart)
+  {
+    if (event == Key::Backspace)
+    {
+      m_vga.retreat();
+    }
+  }
+  else
+  {
+    printf("%c", event);
+  }
 }
 
 void Shell::showPrompt()

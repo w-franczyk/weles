@@ -4,9 +4,13 @@
 
 void ProcessController::invokeSubprocess()
 {
-  void (*cmd)() = reinterpret_cast<void(*)()>(0x100400);
-  cmd();
+  m_shell.setMode(Shell::Mode::PrintOnly);
+
+  m_subprocessStartAddr();
   m_subprocessLoaded = false;
+  m_subprocessSig->ioReadReady = 0;
+
+  m_shell.setMode(Shell::Mode::FullService);
   m_shell.showPrompt();
 }
 

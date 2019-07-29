@@ -1,49 +1,35 @@
 #include "StdinController.h"
 
+#include "Key.h"
+
 #include <stdio.h>
 #include <string.h>
 
 void StdinController::getLine(char* target)
 {
-  m_waitForWholeLine = true;
-
-  /* int c = 1; */
-  // interrupts handling (push func) should set it to false
-  // once we get the whole line
-  /* while (m_waitForWholeLine) */
-  /* { */
-  /*   int a = 2; */
-  /*   int b = a; */
-  /*   a = c; */
-  /*   b = c; */
-  /*   c = 14; */
-  /*   c = b; */
-  /* } */
-
-  memcpy(target, m_buffer, strlen(m_buffer));
-  memset(m_buffer, 0, m_bufferPos);
-  m_bufferPos = 0;
+  m_bufferWholeLine = true;
+  m_targetBuf = target;
+  m_targetBufPos = 0;
 }
 
 void StdinController::push(char c)
 {
-  if (m_waitForWholeLine)
+  if (m_bufferWholeLine)
   {
-    if (m_bufferPos < sizeof(m_buffer))
+    switch (static_cast<unsigned char>(c))
     {
-      if (c == '\n')
+    case '\n':
+      m_processController.setSubprocessIoReadReady();
+      m_bufferWholeLine = false;
+      break;
+    case Key::Backspace:
+      if (m_targetBufPos > 0)
       {
-        m_waitForWholeLine = false;
+        --m_targetBufPos;
       }
-      else
-      {
-        m_buffer[m_bufferPos++] = c;
-      }
-    }
-    else
-    {
-      m_buffer[sizeof(m_buffer) - 1] = 0;
-      m_waitForWholeLine = false;
+      break;
+    default:
+      m_targetBuf[m_targetBufPos++] = c;
     }
   }
   else
