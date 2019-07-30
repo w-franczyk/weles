@@ -25,15 +25,13 @@ void StdinController::push(char c)
     case Key::Backspace:
       if (m_targetBufPos > 0)
       {
-        --m_targetBufPos;
+        m_targetBuf[--m_targetBufPos] = 0;
       }
       break;
     default:
       m_targetBuf[m_targetBufPos++] = c;
     }
   }
-  else
-  {
-    m_processController.stdin(&c, 1);
-  }
+  
+  m_processController.stdin(&c, 1);
 }

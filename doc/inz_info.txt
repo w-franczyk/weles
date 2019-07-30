@@ -23,14 +23,13 @@
   - http://www.uefi.org/sites/default/files/resources/UEFI%20Spec%202_7_A%20Sept%206.pdf
 
 - przygotowanie dysku:
-  - pusta przestrzen: dd if=/de:w
-v/zero of=disk.img bs=1M count=100
+  - pusta przestrzen: dd if=/dev/zero of=disk.img bs=1M count=40
   - fdisk disk.img, tworzymy tabele partycji DOS i partycje, sektor 512b
   - wlaczamy flage boot (0x55aa na offsecie 0x1fe, nie ma jednak dokumentacji)
   - montujemy nowo stworzona partycje:
     sudo losetup --offset 1048576 -f disk.img
     (offset dla partycji, start sector * sector sz)
-  - tworzymy system plikow dla partycji: mkfs.vfat /dev/loop0 (czemu vfat a nie fat?)
+  - tworzymy system plikow dla partycji: mkfs.vfat -F 32 /dev/loop0 (czemu vfat a nie fat?)
 
   - format MBR (pierwszego sektora) https://wiki.osdev.org/MBR_(x86), https://pl.wikipedia.org/wiki/Master_Boot_Record#/media/File:GNU_GRUB_on_MBR_partitioned_hard_disk_drives.svg
   - MBR zaladowany w 0000:7C00 (http://www.scs.stanford.edu/nyu/04fa/lab/specsbbs101.pdf ???)

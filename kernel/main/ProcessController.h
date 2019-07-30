@@ -21,10 +21,11 @@ public:
 
   bool isSubprocessLoaded() const { return m_subprocessLoaded; }
   void invokeSubprocess();
-  void setSubprocessIoReadReady() { m_subprocessSig->ioReadReady = 0; }
+  void setSubprocessIoReadReady() { m_subprocessSig->ioReadReady = 1; }
   void stdin(const char* buff, std::size_t /*size*/);
 
 private:
+#pragma pack(push, 1)
   struct SubprocessSig
   {
     SubprocessSig()
@@ -33,8 +34,11 @@ private:
       static_assert(sizeof(SubprocessSig) <= 512);
     }
 
-    std::uint8_t ioReadReady; // set to 1 when stdin/disk read data ready to read 
+    std::uint8_t ioReadReady; // set to 1 when stdin/disk read data ready to read
+    std::uint8_t argc; // for now always 1 as 1 argument permitted
+    char[256] argv;
   };
+#pragma pack(pop)
 
   bool loadCmd(const char* path);
 

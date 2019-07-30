@@ -7,9 +7,11 @@ void ProcessController::invokeSubprocess()
   m_shell.setMode(Shell::Mode::PrintOnly);
 
   m_subprocessStartAddr();
+
   m_subprocessLoaded = false;
   m_subprocessSig->ioReadReady = 0;
-
+  m_subprocessSig->argc = 0;
+  memset(m_subprocessSig->argv, 0, sizeof(SubprocessSig::argv));
   m_shell.setMode(Shell::Mode::FullService);
   m_shell.showPrompt();
 }
@@ -23,6 +25,13 @@ void ProcessController::stdin(const char* buff, std::size_t /*size*/)
 
     if (loadCmd(binaryName))
     {
+      if (m_shell.getArgc() > 0)
+      {
+        m_subprocessSig->argc = m_shell.getArgc();
+        const char* argv = m_shell.getArgv();
+        memcpy(m_subprocessSig->argv, argv, strlen(argv));
+      }
+
       m_subprocessLoaded = true;
     }
     else

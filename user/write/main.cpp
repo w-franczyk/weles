@@ -7,7 +7,7 @@ int main()
   printf("Podaj imie: ");
   char imie[256] = {0};
   sysStdin(imie);
-  printf("Twoje imie to %s!");
+  printf("Twoje imie to %s!\n", imie);
 
   return 0;
 }
