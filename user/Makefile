@@ -3,10 +3,16 @@ include MakefileUser.inc
 clean: clean-builds clean-output
 	$(MAKE) -C echo $@
 	$(MAKE) -C write $@
+	$(MAKE) -C pwd $@
+	$(MAKE) -C ls $@
+	$(MAKE) -C cd $@
 
 build: $(BUILD_DIR)/crt0.o
 	$(MAKE) -C echo $@
 	$(MAKE) -C write $@
+	$(MAKE) -C pwd $@
+	$(MAKE) -C ls $@
+	$(MAKE) -C cd $@
 
 vdisk: build
 	$(ROOT_DIR)/util/mount.sh $(DISK_IMAGE)

@@ -24,6 +24,8 @@ void Shell::cleanup()
 {
   memset(m_cmdBuffer, 0, sizeof(m_cmdBuffer));
   m_cmdBufferIdx = 0;
+  memset(m_argv, 0, sizeof(m_argv));
+  m_argc = 0;
 }
 
 void Shell::addToBuffer(char c)
@@ -56,9 +58,22 @@ auto Shell::handleActions(unsigned char event) -> EventRes
     if (event == '\n')
     {
       if (m_cmdBufferIdx > 0)
+      {
+        char* spacePos = strchr(m_cmdBuffer, ' ');
+        if (spacePos != nullptr)
+        {
+          std::size_t cmdSize = spacePos - m_cmdBuffer;
+          memcpy(m_argv, spacePos + 1, m_cmdBufferIdx - cmdSize);
+          memset(spacePos, 0, sizeof(m_cmdBuffer) - cmdSize);
+          m_argc = 1;
+        }
+
         return EventRes::ImSoProud_LaunchTheMissile;
+      }
       else
+      {
         showPrompt();
+      }
     }
     else
     {

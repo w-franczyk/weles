@@ -1,13 +1,17 @@
 #include <stdio.h>
 #include <sys/syscall.h>
 
-int main()
+int main(int argc, char* /*argv*/)
 {
-  printf("Witaj!\n");
-  printf("Podaj imie: ");
-  char imie[256] = {0};
-  sysStdin(imie);
-  printf("Twoje imie to %s!\n", imie);
+  if (argc <= 0)
+  {
+    printf("Usage:\n");
+    printf("write PATH\n\n");
+    printf("Example:\n");
+    printf("write /misc/zywiolak\n");
+  }
+
+  
 
   return 0;
 }

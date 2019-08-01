@@ -1,6 +1,7 @@
 #include "ProcessController.h"
 
 #include <stdio.h>
+#include <string.h>
 
 void ProcessController::invokeSubprocess()
 {

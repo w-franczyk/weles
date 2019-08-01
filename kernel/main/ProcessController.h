@@ -34,9 +34,10 @@ private:
       static_assert(sizeof(SubprocessSig) <= 512);
     }
 
-    std::uint8_t ioReadReady; // set to 1 when stdin/disk read data ready to read
-    std::uint8_t argc; // for now always 1 as 1 argument permitted
-    char[256] argv;
+    std::uint8_t ioReadReady = 0; // set to 1 when stdin/disk read data ready to read
+    std::uint8_t argc = 0; // for now always 1 as 1 argument permitted
+    char argv[255] = {0};
+    char currentPath[255] = "/awpjdpoajwpdojawpo"; // operated by the user space
   };
 #pragma pack(pop)
 
