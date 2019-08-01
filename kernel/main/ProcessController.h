@@ -17,6 +17,7 @@ public:
   void init()
   {
     m_shell.init();
+    *m_subprocessSig = SubprocessSig();
   }
 
   bool isSubprocessLoaded() const { return m_subprocessLoaded; }
@@ -37,7 +38,7 @@ private:
     std::uint8_t ioReadReady = 0; // set to 1 when stdin/disk read data ready to read
     std::uint8_t argc = 0; // for now always 1 as 1 argument permitted
     char argv[255] = {0};
-    char currentPath[255] = "/awpjdpoajwpdojawpo"; // operated by the user space
+    char currentPath[255] = "/"; // operated by the user space
   };
 #pragma pack(pop)
 

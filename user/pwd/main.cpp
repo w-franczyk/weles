@@ -1,8 +1,9 @@
 #include <stdio.h>
-#include <sys/weles.h>
+#include <sys/path.h>
 
 int main()
 {
-  printf("%s\n", getCurrentPath());
+  const char* p = weles::getCurrentPath();
+  printf("%s\n", p);
   return 0;
 }
