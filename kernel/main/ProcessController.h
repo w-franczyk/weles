@@ -18,6 +18,7 @@ public:
   {
     m_shell.init();
     *m_subprocessSig = SubprocessSig();
+    saveEnvVars();
   }
 
   bool isSubprocessLoaded() const { return m_subprocessLoaded; }
@@ -43,7 +44,10 @@ private:
 #pragma pack(pop)
 
   bool loadCmd(const char* path);
+  void loadEnvVars();
+  void saveEnvVars();
 
+  char m_envPath[255] = {0};
   Shell m_shell;
   void* m_subprocessAddr = reinterpret_cast<void*>(0x100000);
   SubprocessSig* m_subprocessSig = reinterpret_cast<SubprocessSig*>(0x100400);

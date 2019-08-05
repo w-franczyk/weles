@@ -1,1 +1,1 @@
-qemu-system-i386 -m 512M disk.img
+qemu-system-i386 -m 512M -drive file=disk.img,format=raw

@@ -1,7 +1,11 @@
+#include <sys/path.h>
+#include <sys/syscall.h>
 #include <stdio.h>
 
 int main()
 {
-  printf("hello echo!\n");
+  char dirContents[1024] = {0};
+  sysGetDirContents(weles::getCurrentPath(), dirContents, sizeof(dirContents));
+  printf("%s\n", dirContents);
   return 0;
 }

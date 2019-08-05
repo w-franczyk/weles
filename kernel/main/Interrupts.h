@@ -1,5 +1,6 @@
 #pragma once
 
+#include "FileSystem.h"
 #include "InterruptFrame.h"
 #include "StdinController.h"
 
@@ -282,7 +283,8 @@ public:
   Interrupts() {}
 
   void init(Ps2Keyboard& keyboard,
-            StdinController& stdinController);
+            StdinController& stdinController,
+            FileSystem& fileSystem);
 
   __attribute__((interrupt)) static void
   isrDefault(InterruptFrame*);
@@ -398,6 +400,7 @@ private:
   IdtPtr m_idtPtr;
   Pic m_pic;
   
+  static FileSystem* m_fileSystem;
   static Ps2Keyboard* m_ps2Keyboard;
   static StdinController* m_stdinController;
 };

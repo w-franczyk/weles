@@ -1,17 +1,21 @@
 #include "Interrupts.h"
 
+#include "InterruptDescriptor.h"
+#include "Res.h"
+#include "System.h"
+
 #include <io/PortIo.h>
 #include <io/Vga.h>
-#include <main/InterruptDescriptor.h>
-#include <main/Res.h>
-#include <main/System.h>
 
 Ps2Keyboard* Interrupts::m_ps2Keyboard = nullptr;
 StdinController* Interrupts::m_stdinController = nullptr;
+FileSystem* Interrupts::m_fileSystem = nullptr;
 
 void Interrupts::init(Ps2Keyboard& keyboard,
-                      StdinController& stdinController)
+                      StdinController& stdinController,
+                      FileSystem& fileSystem)
 {
+  m_fileSystem = &fileSystem;
   m_ps2Keyboard = &keyboard;
   m_stdinController = &stdinController;
 
@@ -30,12 +34,13 @@ void Interrupts::isrSyscall(InterruptFrame*)
   enum SysCall : unsigned int
   { 
     CallPutchar = 0xffffffff,
-    CallFileOpen = 0xfffffffe,
-    CallFileClose = 0xfffffffd,
+    CallFileDelete = 0xfffffffd,
     CallFileRead = 0xfffffffc,
     CallFileWrite = 0xfffffffb,
     CallStdin = 0xfffffffa,
-    CallStdout = 0xfffffff9
+    CallStdout = 0xfffffff9,
+    CallGetDirContents = 0xfffffff8,
+    CallStat = 0xfffffff7
   };
 
   register SysCall syscall asm("eax");
@@ -53,6 +58,46 @@ void Interrupts::isrSyscall(InterruptFrame*)
     m_stdinController->getLine(target);
     break;
   }
+  case CallFileDelete:
+  {
+    register char* path asm("ebx");
+    m_fileSystem->fileDelete(path);
+    break;
+  }
+  case CallFileRead:
+  {
+    register const char* path asm("ebx");
+    register char* outBuf asm("ecx");
+    register unsigned maxSize asm("edx");
+    register int* res asm("edi");
+    *res = m_fileSystem->fileRead(path, outBuf, maxSize);
+    break;
+  }
+  case CallFileWrite:
+  {
+    register const char* path asm("ebx");
+    register const char* buf asm("ecx");
+    register unsigned size asm("edx");
+    register int* res asm("edi");
+    *res = m_fileSystem->fileWrite(path, buf, size);
+    break;
+  }
+  case CallGetDirContents:
+  {
+    register const char* path asm("ebx");
+    register char* outBuf asm("ecx");
+    register unsigned int outBufSize asm("edx");
+    m_fileSystem->getDirectoryFileList(path, outBuf, outBufSize);
+    break;
+  }
+  case CallStat:
+  {
+    register const char* path asm("ebx");
+    register bool* res asm("ecx");
+    *res = m_fileSystem->stat(path);
+    break;
+  }
+  break;
   default:
     Res::getVga().print("WARNING: Unhandled syscall\n");
   }

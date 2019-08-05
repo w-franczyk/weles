@@ -12,7 +12,8 @@ void ProcessController::invokeSubprocess()
   m_subprocessLoaded = false;
   m_subprocessSig->ioReadReady = 0;
   m_subprocessSig->argc = 0;
-  memset(m_subprocessSig->argv, 0, sizeof(SubprocessSig::argv));
+  memset(m_subprocessSig->argv, 0, sizeof(SubprocessSig::argv)); // reset args
+  saveEnvVars();
   m_shell.setMode(Shell::Mode::FullService);
   m_shell.showPrompt();
 }
@@ -26,6 +27,7 @@ void ProcessController::stdin(const char* buff, std::size_t /*size*/)
 
     if (loadCmd(binaryName))
     {
+      loadEnvVars();
       if (m_shell.getArgc() > 0)
       {
         m_subprocessSig->argc = m_shell.getArgc();
@@ -82,4 +84,14 @@ bool ProcessController::loadCmd(const char* path)
   }
 
   return true;
+}
+
+void ProcessController::loadEnvVars()
+{
+  memcpy(m_subprocessSig->currentPath, m_envPath, sizeof(m_envPath));
+}
+
+void ProcessController::saveEnvVars()
+{
+  memcpy(m_envPath, m_subprocessSig->currentPath, sizeof(m_envPath));
 }

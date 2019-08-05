@@ -6,7 +6,7 @@ GXXFLAGS := $(GXXFLAGS) -DPRINTF_DISABLE_SUPPORT_LONG_LONG
 
 INCLUDE_DIR := -I $(ROOT_DIR)/lib/libc/include -I $(ROOT_DIR)/lib
 BIN_USR_DIR := $(BIN_DIR)/user
-LIBS += -lLibc -lSys
+LIBS += -lSys -lLibc -lSys
 
 ifneq ($(TARGETBIN_NAME),)
 TARGETBIN = $(BIN_USR_DIR)/$(TARGETBIN_NAME)

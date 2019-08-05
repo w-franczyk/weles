@@ -22,6 +22,7 @@ class Ata
   enum Command
   {
     CmdRead = 0x20,
+    CmdWrite = 0x30,
     CmdIdentify = 0xec
   };
 
@@ -74,6 +75,7 @@ public:
   InitStatus init();
   bool isInitialized() const { return m_initialized; }
   Result read(unsigned int sector, std::uint8_t count, std::uint8_t* outBuff);
+  Result write(unsigned int sector, std::uint8_t count, const std::uint8_t* buff);
 
   DriverIdentifier& test() { return m_driverIdentifier; }
 

@@ -87,6 +87,7 @@
   - jak skompilowac hello world: https://wiki.osdev.org/Bare_Bones
   - przyklad1: https://github.com/stevej/osdev/blob/master/loader/link.ld
   - przyklad2: http://www.osdever.net/bkerndev/Docs/basickernel.htm
+  - GCC's register variables: https://gcc.gnu.org/onlinedocs/gcc/Local-Register-Variables.html#Local-Register-Variables
 
 - libc/libk
   - ogolnie o implementacjach libc: https://wiki.osdev.org/C_Library

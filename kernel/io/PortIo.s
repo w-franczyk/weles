@@ -28,6 +28,30 @@ inb:
   pop edx
   ret
 
+; param: port, buff, count
+; ret: void
+global outwn
+outwn:
+  push ebp
+  mov ebp, esp
+  pusha
+
+  %define PORT ebp + 8
+  %define BUFF ebp + 12
+  %define COUNT ebp + 16
+
+  xor esi, esi
+  xor edx, edx
+  xor ecx, ecx
+  mov esi, [BUFF]
+  mov dx, [PORT]
+  mov cx, [COUNT]
+  rep outsw
+
+  popa
+  pop ebp
+  ret
+
 ; param: port, outBuff, count
 ; ret: void
 global inwn

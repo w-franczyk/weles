@@ -94,44 +94,23 @@ DRESULT disk_read (
 
 DRESULT disk_write (
 	BYTE /*pdrv*/,			/* Physical drive nmuber to identify the drive */
-	const BYTE* /*buff*/,	/* Data to be written */
-	DWORD /*sector*/,		/* Start sector in LBA */
-	UINT /*count*/			/* Number of sectors to write */
+	const BYTE* buff,	/* Data to be written */
+	DWORD sector,		/* Start sector in LBA */
+	UINT count			/* Number of sectors to write */
 )
 {
-	/* DRESULT res; */
-	/* int result; */
-
-	/* switch (pdrv) { */
-	/* case DEV_RAM : */
-	/* 	// translate the arguments here */
-
-	/* 	result = RAM_disk_write(buff, sector, count); */
-
-	/* 	// translate the reslut code here */
-
-	/* 	return res; */
-
-	/* case DEV_MMC : */
-	/* 	// translate the arguments here */
-
-	/* 	result = MMC_disk_write(buff, sector, count); */
-
-	/* 	// translate the reslut code here */
-
-	/* 	return res; */
-
-	/* case DEV_USB : */
-	/* 	// translate the arguments here */
-
-	/* 	result = USB_disk_write(buff, sector, count); */
-
-	/* 	// translate the reslut code here */
-
-	/* 	return res; */
-	/* } */
-
-	return RES_PARERR;
+  switch (Res::getAta().write(sector, count, buff))
+  {
+  case Ata::Result::Ok:
+    return RES_OK;
+  case Ata::Result::NotInitialized:
+    return RES_NOTRDY;
+  case Ata::Result::SectorNbTooBig:
+    return RES_PARERR;
+  case Ata::Result::Error:
+  default:
+    return RES_ERROR;
+  }
 }
 
 #endif
