@@ -2,9 +2,30 @@
 
 [ORG STAGE1_BASE]
 [BITS 16]
-jmp _start
 
-%include "common_skinny.asm"
+bootStart:
+  jmp     _start
+  nop
+  osType      db  'MSDOS6.0'
+  bpb
+  bps         dw  512
+  spc         db  8
+  rs          dw  1
+  fats        db  2
+  re          dw  512
+  ss          dw  0
+  media       db  0xf8
+  spfat       dw  0xc900
+  spt         dw  0x3f00
+  heads       dw  0x1000
+  hidden      dw  0x3f00, 0
+  ls          dw  0x5142,0x0600
+  pdn         db  0x80
+  cheads          db  0
+  sig         db  0x29
+  serialno    dw  0xce13, 0x4630
+  label       db  'NO NAME'
+  fattype     db  "FAT32"
 
 _start:
   ; 80x25 text video mode
@@ -30,6 +51,8 @@ _start:
   add sp, 8
 
   jmp STAGE2_BASE
+
+%include "common_skinny.asm"
 
 exit:
   jmp exit

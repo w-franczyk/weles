@@ -64,26 +64,57 @@ Ata::InitStatus Ata::init()
 
 Ata::Result Ata::read(unsigned int sector, std::uint8_t count, std::uint8_t* outBuff)
 {
+  Result res = prepareIo(CmdRead, sector, count);
+  if (res != Result::Ok)
+    return res;
+
+  inwn(RegData,
+       reinterpret_cast<std::uint16_t*>(outBuff),
+       count * 512 / sizeof(std::uint16_t));
+
+  return cleanUpIo();
+}
+
+Ata::Result Ata::write(unsigned int sector, std::uint8_t count, const std::uint8_t* buff)
+{
+  Result res = prepareIo(CmdWrite, sector, count);
+  if (res != Result::Ok)
+    return res;
+
+  outwn(RegData,
+        reinterpret_cast<const std::uint16_t*>(buff),
+        count * 512 / sizeof(std::uint16_t));
+
+  return cleanUpIo();
+}
+
+Ata::Result Ata::prepareIo(Command cmd, unsigned int sector, std::uint8_t count)
+{
   if (!m_initialized)
     return Result::NotInitialized;
 
   if (sector > 0x0fffffff) // only Lba28 supported so far
     return Result::SectorNbTooBig;
 
+  // wait for disk not busy
+  while ((inb(RegStatus) & StDrqBit) == StDrqBit ||
+         (inb(RegStatus) & StBsyBit) == StBsyBit);
+
   outb(RegSectorCount, count);
   outb(RegLbaLow, sector);
   outb(RegLbaMid, sector >> 8);
   outb(RegLbaHigh, sector >> 16);
 
-  outb(RegCommand, CmdRead);
+  outb(RegCommand, cmd);
   
   while ((inb(RegStatus) & StDrqBit) == 0 &&
          (inb(RegStatus) & StErrBit) == 0);
 
-  inwn(RegData,
-       reinterpret_cast<std::uint16_t*>(outBuff),
-       count * 512 / sizeof(std::uint16_t));
+  return Result::Ok;
+}
 
+Ata::Result Ata::cleanUpIo()
+{
   inb(RegStatus);
   inb(RegStatus);
   inb(RegStatus);
@@ -93,38 +124,6 @@ Ata::Result Ata::read(unsigned int sector, std::uint8_t count, std::uint8_t* out
   
   outb(Pic::Pic1PortCmd, Pic::PicCmdAck);
   outb(Pic::Pic2PortCmd, Pic::PicCmdAck);
-
-  return Result::Ok;
-}
-
-Ata::Result Ata::write(unsigned int sector, std::uint8_t count, const std::uint8_t* buff)
-{
-  if (!m_initialized)
-    return Result::NotInitialized;
-
-  if (sector > 0x0fffffff) // only Lba28 supported so far
-    return Result::SectorNbTooBig;
-
-  outb(RegSectorCount, count);
-  outb(RegLbaLow, sector);
-  outb(RegLbaMid, sector >> 8);
-  outb(RegLbaHigh, sector >> 16);
-
-  outb(RegCommand, CmdWrite);
-  
-  while ((inb(RegStatus) & StDrqBit) == 0 &&
-         (inb(RegStatus) & StErrBit) == 0);
-
-  outwn(RegData,
-        reinterpret_cast<const std::uint16_t*>(buff),
-        count * 512 / sizeof(std::uint16_t));
-
-  inb(RegStatus);
-  inb(RegStatus);
-  inb(RegStatus);
-  inb(RegStatus);
-  if (inb(RegStatus) & StErrBit)
-    return Result::Error;
 
   return Result::Ok;
 }

@@ -15,36 +15,26 @@ int main(int argc, char* argv)
     printf("write /misc/zywiolak\n");
     return 0;
   }
-
+  
   char path[1024] = {0};
-  if (argv[0] != '/')
-  {
-    const char* currPath = weles::getCurrentPath();
-    memcpy(path, currPath, strlen(currPath));
-    
-    if (path[strlen(path) - 1] != '/')
-    {
-      path[strlen(path)] = '/';
-    }
-    
-    memcpy(path + strlen(path) - 1, argv, strlen(argv));
-  }
-  else
-  {
-    memcpy(path, argv, strlen(argv));
-  }
+  weles::getAbsolutePath(argv, path);
 
   char lineBuf[1024] = {0};
-  while (memcmp(lineBuf, ";;wq", 4) != 0)
+  while (true)
   {
     sysStdin(lineBuf);
+
+    if (memcmp(lineBuf, ";;wq", 4) == 0)
+      break;
+
+    lineBuf[strlen(lineBuf)] = '\n';
     int res = sysFileWrite(path, lineBuf, strlen(lineBuf));
     if (res < 0)
     {
       printf("Error: file '%s' write fail: %d\n", path, res);
       break;
     }
-
+    
     memset(lineBuf, 0, sizeof(lineBuf));
   }
 

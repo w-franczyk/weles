@@ -80,6 +80,9 @@ public:
   DriverIdentifier& test() { return m_driverIdentifier; }
 
 private:
+  Result prepareIo(Command cmd, unsigned int sector, std::uint8_t count);
+  Result cleanUpIo();
+
   DriverIdentifier m_driverIdentifier;
   bool m_initialized = false;
 };
