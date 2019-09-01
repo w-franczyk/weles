@@ -28,6 +28,15 @@ bootStart:
   fattype     db  "FAT32"
 
 _start:
+  cli
+  ; setup the stack
+  mov sp, STACK_ADDRESS
+  mov bp, sp
+  sti
+
+  ; BIOS passed driver number into dl reg
+  mov [SYSTEM_INFO_DRIVE_NUMBER], dl
+
   ; 80x25 text video mode
   mov ah, 0x0
   mov al, 0x03
@@ -37,10 +46,6 @@ _start:
   mov ah, 0x05
   mov al, 0x0
   int 0x10
-
-  ; setup the stack
-  mov sp, STACK_ADDRESS
-  mov bp, sp
 
   push 1 ; offset
   push 128 ; size, max stage2 size = 65k

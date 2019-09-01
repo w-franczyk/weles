@@ -37,7 +37,7 @@ disk_read:
   xor ebx, ebx
 
   mov ah, 0x42 ; extended read
-  mov dl, 0x80 ; drive number, TODO: CHECK!
+  mov dl, [SYSTEM_INFO_DRIVE_NUMBER] ; drive number
   mov si, disk_address_packet
   int 0x13
   mov [return_val], ah 

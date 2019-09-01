@@ -1,0 +1,108 @@
+bin
+├── lib
+└── user
+bootloader
+├── ataio.asm
+├── common.asm
+├── common_skinny.asm
+├── consts.asm
+├── Makefile
+├── stage1.asm
+├── stage1.sh
+├── stage2.asm
+└── stage2.sh
+kernel
+├── io
+│   ├── Ata.cpp
+│   ├── Ata.h
+│   ├── Makefile
+│   ├── Pic.cpp
+│   ├── Pic.h
+│   ├── PortIo.h
+│   ├── PortIo.s
+│   ├── Ps2Keyboard.cpp
+│   ├── Ps2Keyboard.h
+│   ├── Vga.cpp
+│   └── Vga.h
+
+├── libk
+│   ├── abort.c -> ../../lib/libc/abort.c
+│   ├── CVga.cpp
+│   ├── CVga.h
+│   ├── include -> ../../lib/libc/include
+│   ├── Makefile
+│   ├── memcmp.c -> ../../lib/libc/memcmp.c
+│   ├── memcpy.c -> ../../lib/libc/memcpy.c
+│   ├── memmove.c -> ../../lib/libc/memmove.c
+│   ├── memset.c -> ../../lib/libc/memset.c
+│   ├── printf.c -> ../../lib/libc/printf.c
+│   ├── putchar.c -> ../../lib/libc/putchar.c
+│   ├── puts.c -> ../../lib/libc/puts.c
+│   ├── strchr.c -> ../../lib/libc/strchr.c
+│   └── strlen.c -> ../../lib/libc/strlen.c
+├── main
+│   ├── bootstrap.s
+│   ├── FileSystem.cpp
+│   ├── FileSystem.h
+│   ├── Gdt.h
+│   ├── InterruptDescriptor.h
+│   ├── InterruptFrame.h
+│   ├── Interrupts.cpp
+│   ├── Interrupts.h
+│   ├── Key.h
+│   ├── kmain.cpp
+│   ├── kmain.ld
+│   ├── Memory.h
+│   ├── ProcessController.cpp
+│   ├── ProcessController.h
+│   ├── Res.cpp
+│   ├── Res.h
+│   ├── Shell.cpp
+│   ├── Shell.h
+│   ├── StdinController.cpp
+│   ├── StdinController.h
+│   ├── System.h
+│   └── System.s
+├── Makefile
+├── MakefileKern.inc
+└── thirdparty
+    └── fatfs
+        ├── diskio.cpp
+        ├── diskio.h -> ../../../lib/fatfs/source/diskio.h
+        ├── ff.c -> ../../../lib/fatfs/source/ff.c
+        ├── ffconf.h -> ../../../lib/fatfs/source/ffconf.h
+        ├── ff.h -> ../../../lib/fatfs/source/ff.h
+        ├── ffsystem.c -> ../../../lib/fatfs/source/ffsystem.c
+        ├── ffunicode.c -> ../../../lib/fatfs/source/ffunicode.c
+        └── Makefile
+user
+├── cat
+│   ├── main.cpp
+│   └── Makefile
+├── cd
+│   ├── main.cpp
+│   └── Makefile
+├── crt0.ld
+├── crt0.s
+├── dis
+├── echo
+│   ├── main.cpp
+│   └── Makefile
+├── ls
+│   ├── main.cpp
+│   └── Makefile
+├── Makefile
+├── MakefileUser.inc
+├── pwd
+│   ├── main.cpp
+│   └── Makefile
+├── rm
+│   ├── main.cpp
+│   └── Makefile
+└── write
+    ├── main.cpp
+    └── Makefile
+util
+├── mount.sh
+└── umount.sh
+
