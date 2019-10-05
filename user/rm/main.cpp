@@ -6,7 +6,7 @@ int main(int argc, char* argv)
 {
   if (argc <= 0)
   {
-    printf("Remove file if you need marcintochuj!\n\n");
+    printf("Remove file if you need.\n\n");
     printf("Usage:\n");
     printf("cat PATH\n\n");
     printf("Example:\n");
