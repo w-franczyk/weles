@@ -27,6 +27,8 @@ bootStart:
   label       db  'NO NAME'
   fattype     db  "FAT32"
 
+%include "common_skinny.asm"
+
 _start:
   cli
   ; setup the stack
@@ -46,6 +48,8 @@ _start:
   mov ah, 0x05
   mov al, 0x0
   int 0x10
+  
+  PRINT msgHello
 
   push 1 ; offset
   push 128 ; size, max stage2 size = 65k
@@ -57,7 +61,8 @@ _start:
 
   jmp STAGE2_BASE
 
-%include "common_skinny.asm"
+
+DEFINE_MSG msgHello, 'Hello'
 
 exit:
   jmp exit
