@@ -7,7 +7,7 @@
 %include "common.asm"
 [BITS 16]
 
-DEFINE_MSG msgBootVer, 'The bootloader'
+DEFINE_MSG msgBootVer, 'The bootloader 6'
 DEFINE_MSG msgWelcome, 'Welcome!'
 DEFINE_MSG msgLoadPartitionData, 'Loading partition data'
 DEFINE_MSG msgLoadBpb, 'Loading BIOS Parameter Block'
@@ -33,14 +33,14 @@ path_bootstrap_len equ $ - path_bootstrap
 start:
   PRINT msgBootVer
   PRINT msgWelcome
-  
+ 
   PRINT msgLoadPartitionData
   call load_partition_data
 
   cli ; disable any other interrupts
   xor ax, ax
   mov ds, ax ; set data segment to 0
- 
+
   ; load GDT
   PRINT msgLoadGdt
   lgdt [gdt_descriptor]
@@ -327,7 +327,16 @@ get_first_sector_of_cluster:
 
 [BITS 32]
 %macro ERROR32 1
-  mov edi, %1
+  mov bl, 'E'
+  mov [0xB8000], bl
+  mov [0xB8001], BYTE 4
+  add al, 0x30
+  mov [0xB8002], al
+  mov [0xb8003], BYTE 5
+  mov dl, %1
+  add dl, 0x30
+  mov [0xB8004], dl
+  mov [0xb8005], BYTE 6
   jmp exit
 %endmacro
 
@@ -474,6 +483,10 @@ protected_mode:
   mov esp, BOOTSTRAP_STACK ; move the stack pointer right after already loaded BIOS stuff
 
   call ata_init
+  cmp eax, 0
+  jne .allgood
+  ERROR32 1
+  .allgood
   push DWORD [kernel_start_sector] ; first cluster of a bootstrap file
   push DWORD BOOTSTRAP_BASE_PHYSICAL ; destination
   call read_file

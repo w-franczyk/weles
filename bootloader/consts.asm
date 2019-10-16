@@ -1,5 +1,5 @@
 %define STAGE1_BASE 0x7c00
-%define STACK_ADDRESS 0x7ffe ; grows down, 512 bytes for STAGE1
+%define STACK_ADDRESS 0x7ff0 ; grows down, 512 bytes for STAGE1
 
 %define SYSTEM_INFO 0x8000 ; 512 bytes for bootloader STACK, 1KB used so far
 %define SYSTEM_INFO_DRIVE_NUMBER 0x8000 ; 1 byte, drive number

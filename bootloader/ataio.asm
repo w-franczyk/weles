@@ -271,17 +271,22 @@ ata_read:
   xor ebx, ebx
   mov bl, ST_DRQ_BIT
   mov bh, ST_ERR_BIT
-  push DWORD REG_STATUS
 .read_loop:
+  push DWORD REG_STATUS
   call inb
+  add esp, 4
+
   and al, bh
   cmp al, 0
   jne .err_read
+
+  push DWORD REG_STATUS
   call inb
+  add esp, 4
+
   and al, bl
   cmp al, 0
   je .read_loop
-  add esp, 4
 
   ; copy to the target buffer
   push DWORD REG_DATA
