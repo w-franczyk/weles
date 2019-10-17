@@ -7,7 +7,7 @@
 %include "common.asm"
 [BITS 16]
 
-DEFINE_MSG msgBootVer, 'The bootloader 6'
+DEFINE_MSG msgBootVer, 'The bootloader'
 DEFINE_MSG msgWelcome, 'Welcome!'
 DEFINE_MSG msgLoadPartitionData, 'Loading partition data'
 DEFINE_MSG msgLoadBpb, 'Loading BIOS Parameter Block'
@@ -484,7 +484,7 @@ protected_mode:
 
   call ata_init
   cmp eax, 0
-  jne .allgood
+  je .allgood
   ERROR32 1
   .allgood
   push DWORD [kernel_start_sector] ; first cluster of a bootstrap file
