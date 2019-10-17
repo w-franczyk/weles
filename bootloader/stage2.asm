@@ -7,7 +7,7 @@
 %include "common.asm"
 [BITS 16]
 
-DEFINE_MSG msgBootVer, 'The bootloader 6'
+DEFINE_MSG msgBootVer, 'The bootloader'
 DEFINE_MSG msgWelcome, 'Welcome!'
 DEFINE_MSG msgLoadPartitionData, 'Loading partition data'
 DEFINE_MSG msgLoadBpb, 'Loading BIOS Parameter Block'
@@ -354,7 +354,6 @@ read_file:
   mov ecx, [start_cluster]
   xor edi, edi
   mov edi, [destination]
-
   .rf_loop:
 	push ecx
 	call get_first_sector_of_cluster32
@@ -484,9 +483,9 @@ protected_mode:
 
   call ata_init
   cmp eax, 0
-  jne .allgood
+  je .allgood
   ERROR32 1
-  .allgood
+  .allgood:
   push DWORD [kernel_start_sector] ; first cluster of a bootstrap file
   push DWORD BOOTSTRAP_BASE_PHYSICAL ; destination
   call read_file
