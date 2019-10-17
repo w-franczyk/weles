@@ -1,6 +1,18 @@
 ; protected mode only!
 [BITS 32]
 
+%macro DEBUG 1
+  push ebx
+  mov bl, 'D'
+  mov [0xB8000], bl
+  mov [0xB8001], BYTE 9
+  mov bl, %1
+  add bl, 0x30
+  mov [0xB8002], bl
+  mov [0xb8003], BYTE 9
+  pop ebx
+%endmacro
+
 %define REG_DATA 0x1f0
 %define REG_ERROR 0x1f1
 %define REG_SECTOR_COUNT 0x1f2
@@ -96,7 +108,6 @@ ata_init:
   mov al, MASTER_DRIVE_BIT
   or al, LBA_MODE_BIT
   push eax
-
   push DWORD REG_DRIVE_HEAD
   call outb
   add esp, 8
