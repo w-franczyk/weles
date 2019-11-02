@@ -354,7 +354,6 @@ read_file:
   mov ecx, [start_cluster]
   xor edi, edi
   mov edi, [destination]
-
   .rf_loop:
 	push ecx
 	call get_first_sector_of_cluster32
@@ -486,7 +485,7 @@ protected_mode:
   cmp eax, 0
   je .allgood
   ERROR32 1
-  .allgood
+  .allgood:
   push DWORD [kernel_start_sector] ; first cluster of a bootstrap file
   push DWORD BOOTSTRAP_BASE_PHYSICAL ; destination
   call read_file
