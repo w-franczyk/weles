@@ -19,6 +19,6 @@ void sysGetDirContents(const char* path, char* outBuf, unsigned outBufSize);
 int sysStat(const char* path);
 ```
 
-The OS is obviously not very usable and it has been created for fun & learn. Feel free to modify and copy any piece of this code as well as experiment with developing your own tools for the Weles OS! ;)
+The OS is obviously not very usable and it has been created for fun & learn. Feel free to copy and modify any piece of this code as well as experiment with developing your own tools for the Weles OS! ;)
 
 ## Compiling & running
